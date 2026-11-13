@@ -44,7 +44,7 @@ document.querySelector('#demo')!.append(
 
 From Mux, pass `playbackId` instead of `src`; the poster and storyboard come from Mux.
 
-In an Astro site, copy `src/` to `src/videojs-skin/` and `astro/PortfolioPlayer.astro` to `src/components/`, then install `@videojs/html@10.4.0`. The component renders the player on the server.
+In an Astro site, copy `src/` to `src/videojs-skin/` and `astro/PortfolioPlayer.astro` to `src/components/`, then install `@videojs/html@10.4.0` and `@videojs/mux-video@10.4.0` (needed to build even without Mux; it loads only where a Mux player is). Load Inter on the page. The component renders the player on the server.
 
 Chapters are plain WebVTT, one cue per chapter:
 
