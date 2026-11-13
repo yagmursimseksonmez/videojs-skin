@@ -96,6 +96,7 @@ export class ChapterDiscsElement extends UIElement {
   #open = false;
   #focusIndex = -1;
   #pointerPick = false;
+  #lastActive = -1;
   #disconnect: AbortController | null = null;
   #resize: ResizeObserver | null = null;
 
@@ -180,6 +181,12 @@ export class ChapterDiscsElement extends UIElement {
 
     const open = chapters.length > 1 && (this.#forced || (paused && !this.#dismissed && !this.#short));
     this.#setOpen(open);
+
+    // Keep the chapter playing now in view as it changes, unless the viewer is moving along the row.
+    if (open && active !== this.#lastActive && !this.contains(this.ownerDocument.activeElement)) {
+      requestAnimationFrame(() => this.#scrollTo(this.#buttons[active], 'center'));
+    }
+    this.#lastActive = active;
   }
 
   #render(chapters: Chapter[]): void {

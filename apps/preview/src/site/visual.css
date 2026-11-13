@@ -1,0 +1,54 @@
+body.visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  padding: 0 40px 24px;
+}
+
+.visual header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.visual h1 {
+  color: var(--foreground);
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.visual header p {
+  color: var(--secondary);
+  font-size: 16px;
+}
+
+.visual .stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.visual .wide {
+  width: 900px;
+}
+
+.visual .wide .pp {
+  --pp-radius: 20px;
+  --pp-disc-zoom: 1.9;
+}
+
+.visual .phone {
+  width: 280px;
+}
+
+.visual .phone .pp {
+  --pp-radius: 28px;
+}
+
+.visual .case h3 {
+  font-size: 16px;
+}
