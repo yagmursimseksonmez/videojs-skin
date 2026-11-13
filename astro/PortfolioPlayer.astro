@@ -1,0 +1,43 @@
+---
+// The portfolio player for an Astro site. Setup: `npm i @videojs/html@10.4.0` (and `@videojs/mux-video@10.4.0` for
+// Mux), copy this repo's `src/` to `src/videojs-skin/` and this file to `src/components/`. Then:
+//
+//   <PortfolioPlayer src="/videos/healthbar-demo.mp4" chapters="/videos/healthbar/chapters.vtt"
+//     thumbnails="/videos/healthbar/storyboard.vtt" poster="/videos/healthbar/poster.jpg"
+//     width={804} height={1748} label="HealthBar walkthrough" />
+//
+// `tools/make-media.py` makes the chapters, storyboard and poster files from a video and its chapter times.
+import { portfolioPlayerMarkup } from '../videojs-skin/markup';
+
+interface Props {
+  src?: string;
+  playbackId?: string;
+  chapters?: string;
+  thumbnails?: string;
+  poster?: string;
+  label: string;
+  width: number;
+  height: number;
+  class?: string;
+}
+
+const { width, height, poster, class: className, ...options } = Astro.props;
+// Ids inside the skin pair each tooltip and popup with its button; this keeps them apart between players.
+const uid = `pp-${Math.random().toString(36).slice(2, 9)}`;
+const html = portfolioPlayerMarkup({ ...options, ratio: `${width} / ${height}` }, uid);
+---
+
+<video-player poster={poster} class={className}><Fragment set:html={html} /></video-player>
+
+<script>
+  import '@videojs/html/video/player';
+  import '../videojs-skin/video/skin';
+
+  if (document.querySelector('video-player mux-video')) void import('@videojs/html/media/mux-video');
+</script>
+
+<style>
+  video-player {
+    display: block;
+  }
+</style>

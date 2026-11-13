@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio player · a Video.js skin by Yağmur Şimşek Sönmez</title>
+    <meta name="description" content="A Video.js v10 skin for the app demos in Yağmur Şimşek Sönmez's portfolio, with chapters on the seek bar." />
+    <meta name="theme-color" content="#202020" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+  </head>
+  <body>
+    <header class="site-nav">
+      <a class="site-name" href="https://yagmursimseksonmez.com">Yağmur Şimşek Sönmez</a>
+      <nav aria-label="Links">
+        <a href="./workbench.html">Workbench</a>
+        <a href="https://github.com/yagmursimseksonmez/videojs-skin">Source</a>
+      </nav>
+    </header>
+    <main>
+      <section class="intro">
+        <h1>Portfolio player</h1>
+        <p>A Video.js skin for the app demos in my portfolio. Every case has chapters, so you can jump straight to the part you want to see.</p>
+      </section>
+      <section class="hero" aria-label="PlayMate demo">
+        <figure class="case" data-case="playmate"></figure>
+      </section>
+      <section class="phones" aria-labelledby="phones-title">
+        <h2 class="eyebrow" id="phones-title">Phone demos</h2>
+        <div class="phone-row">
+          <figure class="case" data-case="chengel"></figure>
+          <figure class="case" data-case="ikeep"></figure>
+          <figure class="case" data-case="healthbar"></figure>
+        </div>
+      </section>
+      <section class="keys" aria-labelledby="keys-title">
+        <h2 class="eyebrow" id="keys-title">Keyboard</h2>
+        <dl class="key-list">
+          <div><dt><kbd>Space</kbd> <kbd>K</kbd></dt><dd>Play or pause</dd></div>
+          <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Back or forward</dd></div>
+          <div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Volume</dd></div>
+          <div><dt><kbd>M</kbd></dt><dd>Mute</dd></div>
+          <div><dt><kbd>F</kbd></dt><dd>Fullscreen</dd></div>
+          <div><dt><kbd>0</kbd>–<kbd>9</kbd></dt><dd>Jump to a tenth</dd></div>
+          <div><dt><kbd>Esc</kbd></dt><dd>Close the chapters</dd></div>
+        </dl>
+      </section>
+    </main>
+    <footer class="site-foot">
+      <p>Built with Video.js 10 for the Video.js Skins Design Challenge. Videos from my case studies at <a href="https://yagmursimseksonmez.com">yagmursimseksonmez.com</a>.</p>
+    </footer>
+    <script type="module" src="/src/site/main.ts"></script>
+  </body>
+</html>

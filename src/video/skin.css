@@ -1,0 +1,1220 @@
+/* Portfolio player.
+   The case pages of yagmursimseksonmez.com show a reading line with a yellow dot for every page; here the seek bar is
+   that line, with a dot for every chapter of the demo. When the video stops, the chapters come up as discs, like the
+   projects on the homepage, so a viewer can jump to the part of the case they care about. Dark #202020, Inter, the
+   portfolio's yellow, and controls that stay out of the way. */
+
+@property --media-slider-fill {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+@property --media-slider-buffer {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+.pp {
+  --pp-page: #202020;
+  --pp-ink: #f4f4f2;
+  --pp-muted: rgb(244 244 242 / 0.78);
+  --pp-faint: rgb(244 244 242 / 0.34);
+  --pp-accent: #ffd100;
+  --pp-on-accent: #202020;
+  --pp-shade: 20 20 20;
+  --pp-glass: rgb(38 39 38 / 0.92);
+  --pp-hairline: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+  --pp-elevation: 0 8px 32px rgb(0 0 0 / 0.28), 0 2px 8px rgb(0 0 0 / 0.2);
+  --pp-font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --pp-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --pp-fast: 160ms;
+  --pp-slow: 260ms;
+  --pp-radius: 16px;
+  --pp-letterbox: #1a1a1a;
+  --pp-disc: 64px;
+  --pp-preview: 92px;
+  /* How far the discs zoom into the frame: above 1 for wide videos with the subject in the middle. */
+  --pp-disc-zoom: 1;
+  --pp-big-play: 72px;
+  --pp-ring: 0 0 0 2px rgb(var(--pp-shade) / 0.9);
+
+  position: relative;
+  display: block;
+  overflow: hidden;
+  container: pp / inline-size;
+  border-radius: var(--pp-radius);
+  background: var(--pp-letterbox);
+  color: var(--pp-ink);
+  font: 400 14px/1.3 var(--pp-font);
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  isolation: isolate;
+  outline: none;
+}
+
+.pp :where(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+.pp:where([data-fullscreen], :fullscreen) {
+  --pp-radius: 0;
+}
+
+.pp > :is(video, mux-video, media-video),
+.pp > slot::slotted(video) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+}
+
+/* The player as a whole takes focus from the keyboard: a ring inside its edge, yellow on a dark line. */
+.pp:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--pp-accent), inset 0 0 0 4px rgb(var(--pp-shade) / 0.9);
+}
+
+.pp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- poster */
+
+.pp-poster {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-slow) var(--pp-ease);
+}
+
+.pp-poster:not([data-visible]) {
+  opacity: 0;
+}
+
+.pp-poster-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---------------------------------------------------------------- scrim */
+
+/* The shade under the controls. Its stops are in pixels, so the text above the line always sits on the same depth of
+   shade, whether the player is a phone or a wall, and stays readable over a white or a yellow frame. */
+.pp-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-slow) var(--pp-ease);
+}
+
+.pp-scrim::before,
+.pp-scrim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--pp-slow) var(--pp-ease);
+}
+
+.pp-scrim::before {
+  background: linear-gradient(
+    to top,
+    rgb(var(--pp-shade) / 0.94) 0,
+    rgb(var(--pp-shade) / 0.88) 72px,
+    rgb(var(--pp-shade) / 0.8) 104px,
+    rgb(var(--pp-shade) / 0.42) 150px,
+    rgb(var(--pp-shade) / 0) 200px
+  );
+}
+
+/* With the discs up, the whole frame steps back. */
+.pp-scrim::after {
+  opacity: 0;
+  background: linear-gradient(
+    to top,
+    rgb(var(--pp-shade) / 0.95) 0,
+    rgb(var(--pp-shade) / 0.88) 250px,
+    rgb(var(--pp-shade) / 0.55) 100%
+  );
+}
+
+.pp[data-pp-chapters] .pp-scrim::after {
+  opacity: 1;
+}
+
+.pp-scrim:not([data-visible]) {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.pp-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  transition: opacity var(--pp-slow) var(--pp-ease);
+}
+
+.pp-content:not([data-visible]) {
+  opacity: 0;
+}
+
+/* The tooltip group only times the tooltips; its children lay out in the column. */
+.pp-content > media-tooltip-group {
+  display: contents;
+}
+
+.pp-content:not([data-visible]) :is(.pp-bar, .pp-discs, .pp-big-play) {
+  pointer-events: none;
+}
+
+.pp-stage {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+.pp-bar {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 12px 6px;
+}
+
+/* ---------------------------------------------------------------- big play */
+
+/* A yellow disc, like the round buttons of the portfolio, while the video is stopped. */
+.pp-big-play {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: var(--pp-big-play);
+  height: var(--pp-big-play);
+  border-radius: 50%;
+  background: var(--pp-accent);
+  color: var(--pp-on-accent);
+  box-shadow: var(--pp-elevation);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    opacity var(--pp-fast) var(--pp-ease),
+    scale var(--pp-fast) var(--pp-ease),
+    filter var(--pp-fast) var(--pp-ease);
+}
+
+.pp-big-play .pp-icon {
+  --pp-icon: calc(var(--pp-big-play) * 0.42);
+}
+
+.pp-big-play .pp-play-icon {
+  translate: 6% 0;
+}
+
+.pp-big-play:not([data-paused]),
+.pp:has(.pp-buffering[data-visible]) .pp-big-play {
+  opacity: 0;
+  scale: 0.85;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pp-big-play:hover {
+    filter: brightness(0.92);
+  }
+}
+
+/* ---------------------------------------------------------------- buffering */
+
+.pp-buffering {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.pp-buffering:not([data-visible]) {
+  display: none;
+}
+
+.pp-spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgb(244 244 242 / 0.28);
+  border-top-color: var(--pp-accent);
+  box-shadow: 0 0 0 6px rgb(var(--pp-shade) / 0.35);
+  animation: pp-spin 900ms linear infinite;
+}
+
+@keyframes pp-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes pp-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------------------------------------------------------------- icons and buttons */
+
+.pp-icon {
+  --pp-icon: 24px;
+  display: block;
+  flex: none;
+  width: var(--pp-icon);
+  height: var(--pp-icon);
+}
+
+.pp-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pp-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--pp-ink);
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.45));
+  transition: background-color var(--pp-fast) var(--pp-ease), color var(--pp-fast) var(--pp-ease);
+}
+
+.pp-button[hidden],
+.pp-button[data-hidden] {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pp-button:hover {
+    background: rgb(244 244 242 / 0.14);
+  }
+}
+
+.pp-button[aria-expanded='true'] {
+  color: var(--pp-accent);
+}
+
+/* Focus: the portfolio's yellow outline, with a dark line inside it so it shows on yellow footage too. */
+.pp :is(.pp-button, .pp-big-play, .pp-seek-thumb, .pp-volume-thumb, .pp-dialog-close):focus-visible {
+  outline: 2px solid var(--pp-accent);
+  outline-offset: 2px;
+  box-shadow: var(--pp-ring);
+}
+
+.pp :is(.pp-button, .pp-big-play):focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Which icon a button shows follows its state. */
+.pp-play :is(.pp-pause-icon, .pp-restart-icon),
+.pp-big-play :is(.pp-pause-icon, .pp-restart-icon),
+.pp-play:not([data-paused]) .pp-play-icon,
+.pp-big-play:not([data-paused]) .pp-play-icon,
+.pp-play[data-ended] .pp-play-icon,
+.pp-big-play[data-ended] .pp-play-icon {
+  display: none;
+}
+
+.pp-play:not([data-paused]) .pp-pause-icon,
+.pp-big-play:not([data-paused]) .pp-pause-icon,
+.pp-play[data-ended] .pp-restart-icon,
+.pp-big-play[data-ended] .pp-restart-icon {
+  display: block;
+}
+
+.pp-mute .pp-icon,
+.pp-fullscreen .pp-icon {
+  display: none;
+}
+
+.pp-mute:is([data-muted], [data-volume-level='off']) .pp-volume-off-icon,
+.pp-mute:not([data-muted])[data-volume-level='low'] .pp-volume-low-icon,
+.pp-mute:not([data-muted]):is([data-volume-level='medium'], [data-volume-level='high']) .pp-volume-high-icon,
+.pp-fullscreen:not([data-fullscreen]) .pp-fullscreen-enter-icon,
+.pp-fullscreen[data-fullscreen] .pp-fullscreen-exit-icon {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- chapter label and time */
+
+.pp-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 18px;
+  padding: 0 8px 2px;
+}
+
+.pp-chapter {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--pp-accent);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.pp-chapter-count {
+  flex: none;
+  color: var(--pp-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pp-chapter-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pp-time {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex: none;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--pp-ink);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.pp-time-separator,
+.pp-time-duration {
+  color: var(--pp-muted);
+}
+
+.pp-time-row {
+  margin-inline-start: 4px;
+}
+
+.pp-time-label {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- seek bar: the reading line */
+
+.pp-seek {
+  position: relative;
+  display: block;
+  height: 28px;
+  margin: 0 8px;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+
+.pp-seek[data-disabled] {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.pp-seek-chapters,
+.pp-seek-chapter {
+  position: absolute;
+  inset: 0;
+}
+
+.pp-seek-track {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 2px;
+  translate: 0 -50%;
+  transition: height var(--pp-fast) var(--pp-ease);
+}
+
+.pp-seek[data-interactive] .pp-seek-track {
+  height: 4px;
+}
+
+/* The line under each chapter, the buffered part and the part already watched, each kept to its chapter. */
+.pp-seek-track::before,
+.pp-seek-buffer,
+.pp-seek-fill {
+  position: absolute;
+  inset-block: 0;
+  left: var(--media-slider-chapter-start, 0%);
+  border-radius: 2px;
+}
+
+.pp-seek-track::before {
+  content: '';
+  right: calc(100% - var(--media-slider-chapter-end, 100%));
+  background: var(--pp-faint);
+  box-shadow: 0 0 0 0.5px rgb(var(--pp-shade) / 0.4);
+}
+
+.pp-seek-buffer {
+  right: max(calc(100% - var(--media-slider-buffer, 0%)), calc(100% - var(--media-slider-chapter-end, 100%)));
+  background: rgb(244 244 242 / 0.5);
+}
+
+.pp-seek-fill {
+  right: max(calc(100% - var(--media-slider-fill, 0%)), calc(100% - var(--media-slider-chapter-end, 100%)));
+  background: var(--pp-accent);
+}
+
+.pp-seek[data-dragging] .pp-seek-fill {
+  right: max(calc(100% - var(--media-slider-pointer, 0%)), calc(100% - var(--media-slider-chapter-end, 100%)));
+}
+
+/* A dot where each chapter starts: light ahead, yellow once you are past it, with a soft ring on the one playing. */
+.pp-seek-dot {
+  position: absolute;
+  top: 50%;
+  left: var(--media-slider-chapter-start, 0%);
+  width: 8px;
+  height: 8px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: rgb(244 244 242 / 0.82);
+  box-shadow: 0 0 0 1.5px rgb(var(--pp-shade) / 0.6);
+  pointer-events: none;
+  transition: box-shadow var(--pp-fast) var(--pp-ease), scale var(--pp-fast) var(--pp-ease);
+}
+
+.pp-seek-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--pp-accent);
+  opacity: clamp(0%, (var(--media-slider-fill, 0%) - var(--media-slider-chapter-start, 0%)) * 1000, 100%);
+}
+
+.pp-seek-chapter[data-active] .pp-seek-dot {
+  box-shadow: 0 0 0 1.5px rgb(var(--pp-shade) / 0.6), 0 0 0 4px rgb(255 209 0 / 0.38);
+}
+
+.pp-seek-chapter[data-active] .pp-seek-dot::after {
+  opacity: 1;
+}
+
+.pp-seek-chapter[data-highlighted] .pp-seek-dot {
+  scale: 1.25;
+}
+
+.pp-seek-thumb {
+  position: absolute;
+  top: 50%;
+  left: var(--media-slider-fill, 0%);
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--pp-ink);
+  box-shadow: 0 0 0 1.5px rgb(var(--pp-shade) / 0.5), 0 2px 6px rgb(0 0 0 / 0.45);
+  transition: scale var(--pp-fast) var(--pp-ease);
+}
+
+.pp-seek[data-dragging] .pp-seek-thumb {
+  left: var(--media-slider-pointer, 0%);
+  scale: 1.15;
+}
+
+.pp-seek-thumb:focus-visible {
+  box-shadow: var(--pp-ring), 0 2px 6px rgb(0 0 0 / 0.45);
+}
+
+/* The preview while pointing at the line: the frame in a disc, with the chapter and time under it. */
+.pp-preview {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  translate: 0 4px;
+  transition: opacity var(--pp-fast) var(--pp-ease), translate var(--pp-fast) var(--pp-ease);
+}
+
+.pp-seek:is([data-pointing], [data-dragging]) .pp-preview {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.pp-preview-disc {
+  position: relative;
+  display: block;
+  width: var(--pp-preview);
+  height: var(--pp-preview);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--pp-page);
+  box-shadow: 0 0 0 2px var(--pp-ink), var(--pp-elevation);
+}
+
+.pp-preview-disc:has(.pp-preview-thumbnail:is([data-hidden], [data-error])) {
+  display: none;
+}
+
+/* With the discs up, the frames are already there: the preview keeps only its chapter and time. */
+.pp[data-pp-chapters] .pp-preview-disc {
+  display: none;
+}
+
+.pp-preview-image {
+  display: block;
+}
+
+.pp-preview-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  max-width: 220px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.pp-preview-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pp-preview-title:empty {
+  display: none;
+}
+
+.pp-preview-time {
+  flex: none;
+  color: var(--pp-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- controls row */
+
+.pp-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pp-spacer {
+  flex: 1;
+}
+
+/* ---------------------------------------------------------------- volume */
+
+.pp-volume {
+  --media-popover-side-offset: 6px;
+  margin: 0;
+  padding: 14px 0;
+  width: 40px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  color: var(--pp-ink);
+  overflow: visible;
+  transition: opacity var(--pp-fast) var(--pp-ease), translate var(--pp-fast) var(--pp-ease);
+}
+
+.pp-volume:not([data-open]) {
+  display: none;
+}
+
+.pp-volume:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  translate: 0 4px;
+}
+
+.pp-volume-slider {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 96px;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+
+.pp-volume-track {
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: 4px;
+  translate: -50% 0;
+  border-radius: 2px;
+  background: var(--pp-faint);
+}
+
+.pp-volume-fill {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: var(--media-slider-fill, 0%);
+  border-radius: inherit;
+  background: var(--pp-accent);
+}
+
+.pp-volume-thumb {
+  position: absolute;
+  left: 50%;
+  bottom: var(--media-slider-fill, 0%);
+  width: 14px;
+  height: 14px;
+  translate: -50% 50%;
+  border-radius: 50%;
+  background: var(--pp-ink);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.45);
+}
+
+/* ---------------------------------------------------------------- chapter discs */
+
+.pp-discs {
+  pointer-events: auto;
+  display: block;
+  /* The row scrolls inside the player; it never widens the page around it. */
+  contain: inline-size;
+  padding: 0 4px 6px;
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 10px;
+  transition:
+    opacity var(--pp-slow) var(--pp-ease),
+    translate var(--pp-slow) var(--pp-ease),
+    visibility 0s linear var(--pp-slow);
+}
+
+.pp-discs[data-open] {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition-delay: 0s;
+}
+
+.pp-discs[data-empty] {
+  display: none;
+}
+
+.pp-discs-list {
+  display: flex;
+  justify-content: safe center;
+  gap: 10px;
+  margin: 0;
+  padding: 6px 16px 2px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 16px;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+}
+
+.pp-discs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.pp-disc-item {
+  flex: none;
+  scroll-snap-align: center;
+}
+
+.pp-disc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: calc(var(--pp-disc) + 26px);
+  margin: 0;
+  padding: 4px 0 2px;
+  border: 0;
+  background: none;
+  color: var(--pp-ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.pp-disc-image {
+  position: relative;
+  display: block;
+  width: var(--pp-disc);
+  height: var(--pp-disc);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--pp-page);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.16), 0 6px 18px rgb(0 0 0 / 0.35);
+  transition: scale var(--pp-fast) var(--pp-ease), box-shadow var(--pp-fast) var(--pp-ease);
+}
+
+/* A thumbnail scales its storyboard tile to its CSS min and max sizes. Both mins at the disc's size and one max (the
+   tile's longer side left free) make it cover the disc; centred in it, the disc shows the middle of the frame. */
+.pp-disc-thumbnail,
+.pp-preview-thumbnail {
+  --pp-cover: calc(var(--pp-disc) * var(--pp-disc-zoom));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  translate: -50% -50%;
+  min-width: var(--pp-cover);
+  min-height: var(--pp-cover);
+  max-height: var(--pp-cover);
+}
+
+.pp[data-pp-orientation='portrait'] :is(.pp-disc-thumbnail, .pp-preview-thumbnail) {
+  max-width: var(--pp-cover);
+  max-height: none;
+}
+
+.pp-preview-thumbnail {
+  --pp-cover: calc(var(--pp-preview) * var(--pp-disc-zoom));
+}
+
+.pp-disc-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--pp-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pp-disc-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* The chapter playing now: a yellow dot before its time, as on the line, and its name in yellow. */
+.pp-disc[aria-current] .pp-disc-time::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pp-accent);
+  box-shadow: 0 0 0 3px rgb(255 209 0 / 0.3);
+}
+
+.pp-disc[aria-current] .pp-disc-title {
+  color: var(--pp-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pp-disc:hover .pp-disc-image {
+    scale: 1.05;
+    box-shadow: 0 0 0 2px var(--pp-ink), 0 8px 22px rgb(0 0 0 / 0.4);
+  }
+}
+
+.pp-disc:focus-visible .pp-disc-image {
+  outline: 2px solid var(--pp-accent);
+  outline-offset: 3px;
+}
+
+.pp-disc:focus-visible .pp-disc-title {
+  text-decoration: underline;
+  text-decoration-color: var(--pp-accent);
+  text-underline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- progress hairline */
+
+/* What is left of the line while the controls rest during playback: the watched part in yellow along the bottom edge. */
+.pp-progress {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 3px;
+  background: rgb(var(--pp-shade) / 0.55);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--pp-slow) var(--pp-ease);
+}
+
+.pp-progress::before {
+  content: '';
+  position: absolute;
+  inset: 1px auto 0 0;
+  width: calc(var(--pp-progress, 0) * 100%);
+  background: var(--pp-accent);
+}
+
+.pp:has(.pp-content:not([data-visible])) .pp-progress {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- tooltips */
+
+.pp-tooltip {
+  --media-tooltip-side-offset: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  color: var(--pp-ink);
+  font: 400 13px/1.2 var(--pp-font);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity var(--pp-fast) var(--pp-ease);
+}
+
+.pp-tooltip:not([data-open]) {
+  display: none;
+}
+
+.pp-tooltip:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+}
+
+.pp-tooltip-key:not(:empty) {
+  padding: 1px 6px;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  color: var(--pp-muted);
+  font-size: 11.5px;
+}
+
+.pp-tooltip-key:empty {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- input indicators */
+
+.pp-indicators {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.pp-indicator {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  color: var(--pp-ink);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  transition: opacity var(--pp-slow) var(--pp-ease), scale var(--pp-slow) var(--pp-ease);
+}
+
+.pp-indicator:not([data-open]) {
+  display: none;
+}
+
+.pp-indicator:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  scale: 0.94;
+}
+
+.pp-volume-indicator-fill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pp-volume-indicator .pp-icon,
+.pp-status-indicator .pp-icon {
+  display: none;
+}
+
+.pp-volume-indicator:is([data-muted], [data-level='off']) .pp-indicator-off-icon,
+.pp-volume-indicator:not([data-muted])[data-level='low'] .pp-indicator-low-icon,
+.pp-volume-indicator:not([data-muted]):is([data-level='medium'], [data-level='high']) .pp-indicator-high-icon,
+.pp-status-indicator[data-action='toggleFullscreen']:not([data-fullscreen]) .pp-status-fullscreen-enter-icon,
+.pp-status-indicator[data-action='toggleFullscreen'][data-fullscreen] .pp-status-fullscreen-exit-icon {
+  display: block;
+}
+
+.pp-seek-indicator[data-direction='backward'] .pp-seek-indicator-icon {
+  scale: -1 1;
+}
+
+/* ---------------------------------------------------------------- error */
+
+.pp-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(var(--pp-shade) / 0.8);
+}
+
+.pp-dialog-backdrop:not([data-open]) {
+  display: none;
+}
+
+.pp-dialog {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  display: grid;
+  gap: 8px;
+  width: min(360px, calc(100% - 32px));
+  padding: 20px;
+  border-radius: 20px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  color: var(--pp-ink);
+  text-align: start;
+}
+
+.pp-dialog:not([data-open]) {
+  display: none;
+}
+
+.pp-dialog-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.pp-dialog-text {
+  color: var(--pp-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.pp-dialog-close {
+  justify-self: start;
+  margin-top: 6px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--pp-accent);
+  color: var(--pp-on-accent);
+  font: 500 14px/1 var(--pp-font);
+  cursor: pointer;
+}
+
+.pp-announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- sizes */
+
+/* Phone-sized players: the time moves up next to the chapter name, so the row keeps four thumb-sized buttons. */
+@container pp (width < 26rem) {
+  .pp {
+    --pp-disc: 52px;
+    --pp-preview: 72px;
+    --pp-big-play: 60px;
+  }
+
+  .pp-bar {
+    padding: 0 6px 4px;
+  }
+
+  .pp-time-row {
+    display: none;
+  }
+
+  .pp-time-label {
+    display: flex;
+    font-size: 12px;
+  }
+
+  .pp-discs-list {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .pp-disc-title {
+    font-size: 11.5px;
+  }
+
+}
+
+@container pp (width < 17rem) {
+  .pp {
+    --pp-disc: 46px;
+    --pp-big-play: 52px;
+  }
+
+  .pp-row {
+    gap: 0;
+  }
+
+  .pp-chapter-count {
+    display: none;
+  }
+}
+
+@container pp (width >= 48rem) {
+  .pp {
+    --pp-disc: 72px;
+    --pp-big-play: 80px;
+  }
+
+  .pp-bar {
+    padding: 0 16px 10px;
+  }
+
+  .pp-discs-list {
+    gap: 16px;
+  }
+}
+
+/* A short player (a wide one on a phone) opens the discs only from the Chapters button, smaller, over the frame. */
+.pp[data-pp-short] {
+  --pp-disc: 44px;
+  --pp-big-play: 52px;
+}
+
+.pp[data-pp-short] .pp-disc-title {
+  -webkit-line-clamp: 1;
+}
+
+.pp[data-pp-short][data-pp-chapters] .pp-big-play {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- fullscreen */
+
+.pp:where([data-fullscreen], :fullscreen) .pp-bar {
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+
+/* ---------------------------------------------------------------- touch */
+
+@media (pointer: coarse) {
+  .pp-seek {
+    height: 40px;
+  }
+
+  .pp-seek-thumb {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ---------------------------------------------------------------- preferences */
+
+/* Calm on request: nothing slides, scales or spins; things only fade, and the buffering ring breathes instead. */
+@media (prefers-reduced-motion: reduce) {
+  .pp,
+  .pp * {
+    scroll-behavior: auto !important;
+  }
+
+  .pp :is(.pp-discs, .pp-preview, .pp-big-play, .pp-volume, .pp-indicator, .pp-seek-thumb, .pp-seek-dot, .pp-disc-image, .pp-seek-track) {
+    translate: none;
+    scale: none;
+    transition-property: opacity, visibility;
+  }
+
+  .pp .pp-seek-thumb {
+    translate: -50% -50%;
+  }
+
+  .pp .pp-volume-thumb {
+    translate: -50% 50%;
+  }
+
+  .pp .pp-seek-dot {
+    translate: -50% -50%;
+  }
+
+  .pp .pp-seek-track {
+    translate: 0 -50%;
+  }
+
+  .pp :is(.pp-disc-thumbnail, .pp-preview-thumbnail) {
+    translate: -50% -50%;
+  }
+
+  .pp-spinner {
+    animation: pp-breathe 2.4s ease-in-out infinite;
+    border-color: rgb(244 244 242 / 0.28);
+    border-top-color: var(--pp-accent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .pp {
+    --pp-glass: rgb(32 32 32);
+    --pp-muted: rgb(244 244 242 / 0.92);
+    --pp-faint: rgb(244 244 242 / 0.5);
+  }
+
+  .pp-scrim::before {
+    background: linear-gradient(to top, rgb(var(--pp-shade) / 0.97) 0, rgb(var(--pp-shade) / 0.95) 150px, rgb(var(--pp-shade) / 0) 210px);
+  }
+}
+
+@media (forced-colors: active) {
+  .pp-seek-track::before,
+  .pp-volume-track {
+    background: CanvasText;
+  }
+
+  .pp-seek-fill,
+  .pp-volume-fill,
+  .pp-seek-dot::after,
+  .pp-progress::before {
+    background: Highlight;
+  }
+
+  .pp-big-play {
+    border: 2px solid ButtonText;
+  }
+}

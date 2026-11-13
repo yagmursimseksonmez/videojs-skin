@@ -1,0 +1,34 @@
+[
+  {
+    "id": "playmate",
+    "title": "PlayMate",
+    "file": "playmate-hero-final.mp4",
+    "poster": 1,
+    "label": "PlayMate walkthrough: onboarding, joining a game, rating teammates, finding a match, creating a game, friends, profiles, settings and the no-show penalty",
+    "chapters": [[0, "Onboarding"], [3.3, "Joining a game"], [14.9, "Rating teammates"], [22.0, "Finding a match"], [27.8, "Creating a game"], [33.3, "Friends"], [36.9, "Profiles"], [43.9, "Settings"], [49.2, "No-show penalty"]]
+  },
+  {
+    "id": "chengel",
+    "title": "Chengel",
+    "file": "chengel-demo.mp4",
+    "poster": 0,
+    "label": "Chengel walkthrough: onboarding, the puzzle path, solving a crossword, the streak and reminder, flash cards, then the garden and awards",
+    "chapters": [[0, "Onboarding"], [3.2, "The puzzle path"], [4.5, "Solving a crossword"], [10.0, "Streak and reminder"], [13.2, "Flash cards"], [18.6, "Garden and awards"]]
+  },
+  {
+    "id": "ikeep",
+    "title": "iKeep",
+    "file": "ikeep21-demo.mp4",
+    "poster": 0,
+    "label": "iKeep walkthrough: a value hidden as dots and revealed with the eye, a new item added from the plus button and shown in its category, then the list in dark mode",
+    "chapters": [[0, "Hidden as dots"], [2.4, "Adding an item"], [7.6, "In its category"], [10.5, "Dark mode"]]
+  },
+  {
+    "id": "healthbar",
+    "title": "HealthBar",
+    "file": "healthbar-demo.mp4",
+    "poster": 0.2,
+    "label": "HealthBar walkthrough: the HP bar and Master Ronnie's tip, quick actions for mood and water, then achievements, daily goals and the HP trend",
+    "chapters": [[0, "Tip and quick actions"], [2.3, "Achievements"], [3.9, "Daily goals"], [7.6, "HP trend"]]
+  }
+]

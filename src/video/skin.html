@@ -1,0 +1,220 @@
+<media-container class="media-skin pp" data-preset="video">
+<!-- Add a compatible media component here. -->
+<media-poster class="pp-poster">
+<img alt="" decoding="async" class="pp-poster-image">
+</media-poster>
+<pp-progress class="pp-progress" aria-hidden="true"></pp-progress>
+<media-error-dialog>
+<media-dialog-backdrop class="pp-dialog-backdrop">
+</media-dialog-backdrop>
+<media-dialog-popup class="pp-dialog">
+<media-dialog-title class="pp-dialog-title">
+</media-dialog-title>
+<media-dialog-description class="pp-dialog-text">
+</media-dialog-description>
+<media-dialog-close class="pp-dialog-close">
+</media-dialog-close>
+</media-dialog-popup>
+</media-error-dialog>
+<media-controls class="pp-controls">
+<media-controls-backdrop class="pp-scrim">
+</media-controls-backdrop>
+<media-controls-content class="pp-content">
+<media-tooltip-group delay="500" close-delay="0" timeout="400">
+<div class="pp-stage">
+<media-buffering-indicator class="pp-buffering">
+<span class="pp-spinner"></span>
+</media-buffering-indicator>
+<media-play-button class="pp-big-play" tabindex="-1">
+<media-icon family="portfolio" name="play" class="pp-icon pp-play-icon">
+</media-icon>
+<media-icon family="portfolio" name="pause" class="pp-icon pp-pause-icon">
+</media-icon>
+<media-icon family="portfolio" name="restart" class="pp-icon pp-restart-icon">
+</media-icon>
+</media-play-button>
+</div>
+<pp-chapter-discs class="pp-discs" id="{{uid}}-chapters">
+</pp-chapter-discs>
+<div class="pp-bar">
+<div class="pp-label">
+<pp-chapter-label class="pp-chapter">
+</pp-chapter-label>
+<media-time-group class="pp-time pp-time-label">
+<media-time class="pp-time-current" type="current">
+</media-time>
+<media-time-separator class="pp-time-separator">
+</media-time-separator>
+<media-time class="pp-time-duration" type="duration">
+</media-time>
+</media-time-group>
+</div>
+<media-time-slider class="pp-seek" thumb-alignment="center" large-step="5">
+<media-time-slider-chapters class="pp-seek-chapters">
+<template>
+<div class="pp-seek-chapter">
+<media-slider-track class="pp-seek-track">
+<media-slider-buffer class="pp-seek-buffer">
+</media-slider-buffer>
+<media-slider-fill class="pp-seek-fill">
+</media-slider-fill>
+</media-slider-track>
+<span class="pp-seek-dot"></span>
+</div>
+</template>
+</media-time-slider-chapters>
+<media-slider-thumb class="pp-seek-thumb">
+</media-slider-thumb>
+<media-slider-preview class="pp-preview" overflow="clamp">
+<span class="pp-preview-disc">
+<media-slider-thumbnail class="pp-preview-thumbnail">
+<img alt="" aria-hidden="true" decoding="async" class="pp-preview-image">
+</media-slider-thumbnail>
+</span>
+<span class="pp-preview-meta">
+<media-time-slider-chapter-title class="pp-preview-title">
+</media-time-slider-chapter-title>
+<media-slider-value class="pp-preview-time" type="pointer">
+</media-slider-value>
+</span>
+</media-slider-preview>
+</media-time-slider>
+<media-controls-group class="pp-row" aria-label="Playback controls">
+<media-play-button class="pp-button pp-play" id="{{uid}}-play">
+<media-icon family="portfolio" name="play" class="pp-icon pp-play-icon">
+</media-icon>
+<media-icon family="portfolio" name="pause" class="pp-icon pp-pause-icon">
+</media-icon>
+<media-icon family="portfolio" name="restart" class="pp-icon pp-restart-icon">
+</media-icon>
+</media-play-button>
+<media-tooltip trigger="{{uid}}-play" side="top" class="pp-tooltip">
+<media-tooltip-label>
+</media-tooltip-label>
+<media-tooltip-shortcut class="pp-tooltip-key">
+</media-tooltip-shortcut>
+</media-tooltip>
+<media-time-group class="pp-time pp-time-row">
+<media-time class="pp-time-current" type="current">
+</media-time>
+<media-time-separator class="pp-time-separator">
+</media-time-separator>
+<media-time class="pp-time-duration" type="duration">
+</media-time>
+</media-time-group>
+<span class="pp-spacer"></span>
+<media-mute-button commandfor="{{uid}}-volume" class="pp-button pp-mute" id="{{uid}}-mute">
+<media-icon family="portfolio" name="volume-off" class="pp-icon pp-volume-off-icon">
+</media-icon>
+<media-icon family="portfolio" name="volume-low" class="pp-icon pp-volume-low-icon">
+</media-icon>
+<media-icon family="portfolio" name="volume-high" class="pp-icon pp-volume-high-icon">
+</media-icon>
+</media-mute-button>
+<media-tooltip trigger="{{uid}}-mute" side="top" disabled class="pp-tooltip">
+<media-tooltip-label>
+</media-tooltip-label>
+<media-tooltip-shortcut class="pp-tooltip-key">
+</media-tooltip-shortcut>
+</media-tooltip>
+<media-volume-popover open-on-hover delay="150" close-delay="200" side="top" class="pp-volume" id="{{uid}}-volume">
+<media-volume-slider class="pp-volume-slider" orientation="vertical">
+<media-slider-track class="pp-volume-track">
+<media-slider-fill class="pp-volume-fill">
+</media-slider-fill>
+</media-slider-track>
+<media-slider-thumb class="pp-volume-thumb">
+</media-slider-thumb>
+</media-volume-slider>
+</media-volume-popover>
+<button type="button" class="pp-button pp-chapters-button" id="{{uid}}-chapters-button" aria-controls="{{uid}}-chapters" aria-expanded="false" aria-label="Chapters">
+<media-icon family="portfolio" name="chapters" class="pp-icon">
+</media-icon>
+</button>
+<media-tooltip trigger="{{uid}}-chapters-button" side="top" class="pp-tooltip">
+<span class="pp-tooltip-text">Chapters</span>
+</media-tooltip>
+<media-fullscreen-button class="pp-button pp-fullscreen" id="{{uid}}-fullscreen">
+<media-icon family="portfolio" name="fullscreen-enter" class="pp-icon pp-fullscreen-enter-icon">
+</media-icon>
+<media-icon family="portfolio" name="fullscreen-exit" class="pp-icon pp-fullscreen-exit-icon">
+</media-icon>
+</media-fullscreen-button>
+<media-tooltip trigger="{{uid}}-fullscreen" side="top" align="end" class="pp-tooltip">
+<media-tooltip-label>
+</media-tooltip-label>
+<media-tooltip-shortcut class="pp-tooltip-key">
+</media-tooltip-shortcut>
+</media-tooltip>
+</media-controls-group>
+</div>
+</media-tooltip-group>
+</media-controls-content>
+</media-controls>
+<media-hotkey keys="Space" action="togglePaused">
+</media-hotkey>
+<media-hotkey keys="k" action="togglePaused">
+</media-hotkey>
+<media-hotkey keys="m" action="toggleMuted">
+</media-hotkey>
+<media-hotkey keys="ArrowRight" action="seekStep">
+</media-hotkey>
+<media-hotkey keys="ArrowLeft" action="seekStep">
+</media-hotkey>
+<media-hotkey keys="l" action="seekStep">
+</media-hotkey>
+<media-hotkey keys="j" action="seekStep">
+</media-hotkey>
+<media-hotkey keys="ArrowUp" action="volumeStep">
+</media-hotkey>
+<media-hotkey keys="ArrowDown" action="volumeStep">
+</media-hotkey>
+<media-hotkey keys="0-9" action="seekToPercent">
+</media-hotkey>
+<media-hotkey keys="Home" action="seekToPercent" value="0">
+</media-hotkey>
+<media-hotkey keys="End" action="seekToPercent" value="100">
+</media-hotkey>
+<media-hotkey keys="f" action="toggleFullscreen">
+</media-hotkey>
+<media-gesture type="tap" action="togglePaused" pointer="mouse" region="center">
+</media-gesture>
+<media-gesture type="tap" action="toggleControls" pointer="touch">
+</media-gesture>
+<media-gesture type="doubletap" action="seekStep" region="left">
+</media-gesture>
+<media-gesture type="doubletap" action="toggleFullscreen" region="center">
+</media-gesture>
+<media-gesture type="doubletap" action="seekStep" region="right">
+</media-gesture>
+<media-status-announcer class="pp-announcer">
+</media-status-announcer>
+<div aria-hidden="true" class="pp-indicators">
+<media-volume-indicator class="pp-indicator pp-volume-indicator">
+<media-volume-indicator-fill class="pp-volume-indicator-fill">
+<media-icon family="portfolio" name="volume-high" class="pp-icon pp-indicator-high-icon">
+</media-icon>
+<media-icon family="portfolio" name="volume-low" class="pp-icon pp-indicator-low-icon">
+</media-icon>
+<media-icon family="portfolio" name="volume-off" class="pp-icon pp-indicator-off-icon">
+</media-icon>
+<media-volume-indicator-value class="pp-indicator-value">
+</media-volume-indicator-value>
+</media-volume-indicator-fill>
+</media-volume-indicator>
+<media-status-indicator actions="toggleFullscreen" class="pp-indicator pp-status-indicator">
+<media-icon family="portfolio" name="fullscreen-enter" class="pp-icon pp-status-fullscreen-enter-icon">
+</media-icon>
+<media-icon family="portfolio" name="fullscreen-exit" class="pp-icon pp-status-fullscreen-exit-icon">
+</media-icon>
+<media-status-indicator-value class="pp-indicator-value">
+</media-status-indicator-value>
+</media-status-indicator>
+<media-seek-indicator class="pp-indicator pp-seek-indicator">
+<media-icon family="portfolio" name="seek" class="pp-icon pp-seek-indicator-icon">
+</media-icon>
+<media-seek-indicator-value class="pp-indicator-value">
+</media-seek-indicator-value>
+</media-seek-indicator>
+</div>
+</media-container>
