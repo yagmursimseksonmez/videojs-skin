@@ -79,3 +79,7 @@ Set these on `.pp` or any parent:
 - `npm run build`: a static site in `dist/`.
 - `npm run audit`: with the dev server running, checks controls, keyboard, focus, tap sizes, contrast, responsive sizes and reduced motion, and saves screenshots to `design/audit/`.
 - `npm run typecheck`.
+
+## License
+
+Apache 2.0, as the Video.js Skins Design Challenge asks of its entries.
