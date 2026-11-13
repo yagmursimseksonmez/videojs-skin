@@ -1117,7 +1117,7 @@
 /* A short player (a wide one on a phone) opens the discs only from the Chapters button, smaller, over the frame. */
 .pp[data-pp-short] {
   --pp-disc: 44px;
-  --pp-big-play: 52px;
+  --pp-big-play: 44px;
 }
 
 .pp[data-pp-short] .pp-disc-title {
