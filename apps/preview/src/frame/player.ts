@@ -7,6 +7,7 @@ export function createPlayer(): HTMLElement {
     poster: './media/playmate/poster.jpg',
     chapters: './media/playmate/chapters.vtt',
     thumbnails: './media/playmate/storyboard.vtt',
+    notes: './media/playmate/notes.vtt',
     label: 'PlayMate demo',
   });
 }

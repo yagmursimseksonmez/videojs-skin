@@ -1,5 +1,6 @@
 """Builds each case's media for the demo: the video, a poster, a chapters track and a storyboard
-(a sprite of frames plus its WebVTT), from media/cases.json and the portfolio's videos.
+(a sprite of frames plus its WebVTT), from media/cases.json and the portfolio's videos (the Chengel promo is made
+here, by tools/make-promo.mjs).
 
 python3 tools/make-media.py ~/Desktop/portfolio/public/videos
 """
@@ -25,7 +26,8 @@ def ts(t):
 
 
 for case in json.load(open(os.path.join(ROOT, 'media/cases.json'))):
-    src = os.path.join(SRC, case['file'])
+    # A case made here (the promo) names its file in this repo; the others come from the portfolio's videos.
+    src = os.path.join(ROOT, case['path']) if 'path' in case else os.path.join(SRC, case['file'])
     dst = os.path.join(OUT, case['id'])
     os.makedirs(dst, exist_ok=True)
     w, h, dur = probe(src)

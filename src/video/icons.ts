@@ -27,6 +27,25 @@ export const icons = {
   chapters: svg(
     '<circle fill="currentColor" stroke="none" cx="5" cy="7" r="1.5"/><circle fill="currentColor" stroke="none" cx="5" cy="12" r="1.5"/><circle fill="currentColor" stroke="none" cx="5" cy="17" r="1.5"/><path d="M9.5 7h10"/><path d="M9.5 12h10"/><path d="M9.5 17h6.5"/>'
   ),
+  // Reverse and advance, as on a slide projector: a bar and a triangle.
+  previous: svg('<path d="M6.5 6v12"/><path fill="currentColor" stroke="none" d="M18 6.9v10.2c0 .7-.8 1.1-1.4.7L9.6 12.7a.85.85 0 0 1 0-1.4l7-5.1c.6-.4 1.4 0 1.4.7Z"/>'),
+  next: svg('<path d="M17.5 6v12"/><path fill="currentColor" stroke="none" d="M6 6.9v10.2c0 .7.8 1.1 1.4.7l7-5.1a.85.85 0 0 0 0-1.4l-7-5.1C6.8 5.8 6 6.2 6 6.9Z"/>'),
+  // The chapters: the round slide tray seen from above, its slots around the hub.
+  tray: svg('<circle cx="12" cy="12" r="8.25"/><circle cx="12" cy="12" r="2"/><path d="M12 3.75v3"/><path d="M12 17.25v3"/><path d="M3.75 12h3"/><path d="M17.25 12h3"/><path d="m6.2 6.2 2.1 2.1"/><path d="m15.7 15.7 2.1 2.1"/><path d="m17.8 6.2-2.1 2.1"/><path d="m8.3 15.7-2.1 2.1"/>'),
   close: svg('<path d="m7 7 10 10"/><path d="M17 7 7 17"/>'),
   seek: svg('<path d="m9.5 6.5 5.5 5.5-5.5 5.5"/>'),
+  // Settings: two sliders, drawn like the chapters icon.
+  settings: svg(
+    '<path d="M4.25 8h3"/><circle cx="9.5" cy="8" r="2.25"/><path d="M11.75 8h8"/><path d="M4.25 16h8"/><circle cx="14.5" cy="16" r="2.25"/><path d="M16.75 16h3"/>'
+  ),
+  speed: svg('<path d="M4.75 16.5a7.25 7.25 0 1 1 14.5 0"/><path d="m12 16.5 3.25-4.25"/>'),
+  captions: svg(
+    '<rect x="3.75" y="5.75" width="16.5" height="12.5" rx="2.5"/><path d="M7.5 11h4.5"/><path d="M14.5 11h2"/><path d="M7.5 14.5h2"/><path d="M12 14.5h4.5"/>'
+  ),
+  // Design notes: a note card pinned to a dot, as in the player.
+  notes: svg(
+    '<rect x="4.75" y="4.25" width="14.5" height="10.5" rx="2.5"/><path d="M8 8h8"/><path d="M8 11h5"/><path d="M8 14.75v3"/><circle fill="currentColor" stroke="none" cx="8" cy="19.5" r="1.5"/>'
+  ),
+  chevron: svg('<path d="m10 7 5 5-5 5"/>'),
+  check: svg('<path d="m5.75 12.5 4 4 8.5-9"/>'),
 };

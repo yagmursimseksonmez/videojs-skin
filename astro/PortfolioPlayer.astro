@@ -1,20 +1,23 @@
 ---
 // The portfolio player for an Astro site. Setup: `npm i @videojs/html@10.4.0 @videojs/mux-video@10.4.0` (the second
 // is needed to build even without Mux; it loads only on a page with a Mux player), copy this repo's `src/` to
-// `src/videojs-skin/` and this file to `src/components/`, and load Inter on the page. Then:
+// `src/videojs-skin/` and this file to `src/components/`, and load Inter (and Doto, for the projector's display) on the page. Then:
 //
 //   <PortfolioPlayer src="/videos/healthbar-demo.mp4" chapters="/videos/healthbar/chapters.vtt"
-//     thumbnails="/videos/healthbar/storyboard.vtt" poster="/videos/healthbar/poster.jpg"
+//     thumbnails="/videos/healthbar/storyboard.vtt" notes="/videos/healthbar/notes.vtt" poster="/videos/healthbar/poster.jpg"
 //     width={804} height={1748} label="HealthBar walkthrough" />
 //
 // `tools/make-media.py` makes the chapters, storyboard and poster files from a video and its chapter times.
-import { portfolioPlayerMarkup } from '../videojs-skin/markup';
+import { portfolioPlayerMarkup, type PortfolioPlayerEnd } from '../videojs-skin/markup';
 
 interface Props {
   src?: string;
   playbackId?: string;
   chapters?: string;
   thumbnails?: string;
+  notes?: string;
+  end?: PortfolioPlayerEnd;
+  theme?: 'projector' | 'desk';
   poster?: string;
   label: string;
   width: number;

@@ -105,20 +105,20 @@ video-player {
   padding: 0 4px;
 }
 
-.case h3 {
+.case figcaption h3 {
   color: var(--foreground);
   font-size: 18px;
   font-weight: 400;
 }
 
-.case p {
+.case figcaption p {
   color: var(--secondary);
   font-size: 14px;
 }
 
 .hero .pp {
   --pp-radius: 20px;
-  /* PlayMate's phone stands in the middle of a wide frame: the discs zoom in on it. */
+  /* In the wide videos the phone stands in the middle of the frame: the discs zoom in on it. */
   --pp-disc-zoom: 1.9;
 }
 
@@ -230,4 +230,38 @@ kbd {
   .phone-row {
     scroll-behavior: auto;
   }
+}
+
+/* The two looks of the skin, side by side on the demo page. */
+.theme-switch {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 20px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.06);
+}
+
+.theme-switch button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--secondary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.theme-switch button[aria-pressed='true'] {
+  background: #ffd100;
+  color: #202020;
+}
+
+.theme-switch button:focus-visible {
+  outline: 2px solid #ffd100;
+  outline-offset: 2px;
 }

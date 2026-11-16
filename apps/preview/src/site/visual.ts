@@ -3,6 +3,8 @@ import './visual.css';
 import { createPortfolioPlayer } from '@/player';
 import { cases } from './cases';
 
+const theme = new URLSearchParams(location.search).get('theme') === 'projector' ? 'projector' : 'desk';
+
 for (const figure of document.querySelectorAll<HTMLElement>('figure.case')) {
   const item = cases.find((c) => c.id === figure.dataset.case)!;
   const base = `./media/${item.id}`;
@@ -12,8 +14,11 @@ for (const figure of document.querySelectorAll<HTMLElement>('figure.case')) {
       thumbnails: `${base}/storyboard.vtt`,
       poster: `${base}/poster.jpg`,
       chapters: `${base}/chapters.vtt`,
-      label: `${item.title} demo`,
+      notes: `${base}/notes.vtt`,
+      label: `${item.title} ${item.end ? 'promo' : 'demo'}`,
       ratio: item.ratio,
+      end: item.end,
+      theme,
     })
   );
   const caption = document.createElement('figcaption');

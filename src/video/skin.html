@@ -33,10 +33,13 @@
 <media-icon family="portfolio" name="restart" class="pp-icon pp-restart-icon">
 </media-icon>
 </media-play-button>
+<!-- End card -->
 </div>
 <pp-chapter-discs class="pp-discs" id="{{uid}}-chapters">
 </pp-chapter-discs>
 <div class="pp-bar">
+<pp-chapter-note class="pp-note">
+</pp-chapter-note>
 <div class="pp-label">
 <pp-chapter-label class="pp-chapter">
 </pp-chapter-label>
@@ -49,6 +52,43 @@
 </media-time>
 </media-time-group>
 </div>
+<media-controls-group class="pp-row" aria-label="Playback controls">
+<button type="button" class="pp-button pp-step" data-pp-step="-1" id="{{uid}}-previous" aria-label="Previous chapter">
+<media-icon family="portfolio" name="previous" class="pp-icon">
+</media-icon>
+</button>
+<media-tooltip trigger="{{uid}}-previous" side="top" class="pp-tooltip">
+<span class="pp-tooltip-text">Previous chapter</span>
+</media-tooltip>
+<media-play-button class="pp-button pp-play" id="{{uid}}-play">
+<media-icon family="portfolio" name="play" class="pp-icon pp-play-icon">
+</media-icon>
+<media-icon family="portfolio" name="pause" class="pp-icon pp-pause-icon">
+</media-icon>
+<media-icon family="portfolio" name="restart" class="pp-icon pp-restart-icon">
+</media-icon>
+</media-play-button>
+<media-tooltip trigger="{{uid}}-play" side="top" class="pp-tooltip">
+<media-tooltip-label>
+</media-tooltip-label>
+<media-tooltip-shortcut class="pp-tooltip-key">
+</media-tooltip-shortcut>
+</media-tooltip>
+<button type="button" class="pp-button pp-step" data-pp-step="1" id="{{uid}}-next" aria-label="Next chapter">
+<media-icon family="portfolio" name="next" class="pp-icon">
+</media-icon>
+</button>
+<media-tooltip trigger="{{uid}}-next" side="top" class="pp-tooltip">
+<span class="pp-tooltip-text">Next chapter</span>
+</media-tooltip>
+<media-time-group class="pp-time pp-time-row">
+<media-time class="pp-time-current" type="current">
+</media-time>
+<media-time-separator class="pp-time-separator">
+</media-time-separator>
+<media-time class="pp-time-duration" type="duration">
+</media-time>
+</media-time-group>
 <media-time-slider class="pp-seek" thumb-alignment="center" large-step="5">
 <media-time-slider-chapters class="pp-seek-chapters">
 <template>
@@ -64,6 +104,21 @@
 </template>
 </media-time-slider-chapters>
 <media-slider-thumb class="pp-seek-thumb">
+<span class="pp-lens" aria-hidden="true">
+<media-time-slider-chapters class="pp-seek-chapters">
+<template>
+<div class="pp-seek-chapter">
+<media-slider-track class="pp-seek-track">
+<media-slider-buffer class="pp-seek-buffer">
+</media-slider-buffer>
+<media-slider-fill class="pp-seek-fill">
+</media-slider-fill>
+</media-slider-track>
+<span class="pp-seek-dot"></span>
+</div>
+</template>
+</media-time-slider-chapters>
+</span>
 </media-slider-thumb>
 <media-slider-preview class="pp-preview" overflow="clamp">
 <span class="pp-preview-disc">
@@ -79,29 +134,6 @@
 </span>
 </media-slider-preview>
 </media-time-slider>
-<media-controls-group class="pp-row" aria-label="Playback controls">
-<media-play-button class="pp-button pp-play" id="{{uid}}-play">
-<media-icon family="portfolio" name="play" class="pp-icon pp-play-icon">
-</media-icon>
-<media-icon family="portfolio" name="pause" class="pp-icon pp-pause-icon">
-</media-icon>
-<media-icon family="portfolio" name="restart" class="pp-icon pp-restart-icon">
-</media-icon>
-</media-play-button>
-<media-tooltip trigger="{{uid}}-play" side="top" class="pp-tooltip">
-<media-tooltip-label>
-</media-tooltip-label>
-<media-tooltip-shortcut class="pp-tooltip-key">
-</media-tooltip-shortcut>
-</media-tooltip>
-<media-time-group class="pp-time pp-time-row">
-<media-time class="pp-time-current" type="current">
-</media-time>
-<media-time-separator class="pp-time-separator">
-</media-time-separator>
-<media-time class="pp-time-duration" type="duration">
-</media-time>
-</media-time-group>
 <span class="pp-spacer"></span>
 <media-mute-button commandfor="{{uid}}-volume" class="pp-button pp-mute" id="{{uid}}-mute">
 <media-icon family="portfolio" name="volume-off" class="pp-icon pp-volume-off-icon">
@@ -128,12 +160,93 @@
 </media-volume-slider>
 </media-volume-popover>
 <button type="button" class="pp-button pp-chapters-button" id="{{uid}}-chapters-button" aria-controls="{{uid}}-chapters" aria-expanded="false" aria-label="Chapters">
-<media-icon family="portfolio" name="chapters" class="pp-icon">
+<media-icon family="portfolio" name="tray" class="pp-icon">
 </media-icon>
 </button>
 <media-tooltip trigger="{{uid}}-chapters-button" side="top" class="pp-tooltip">
 <span class="pp-tooltip-text">Chapters</span>
 </media-tooltip>
+<button type="button" commandfor="{{uid}}-settings" class="pp-button pp-settings-button" id="{{uid}}-settings-button" aria-label="Settings">
+<media-icon family="portfolio" name="settings" class="pp-icon">
+</media-icon>
+</button>
+<media-tooltip trigger="{{uid}}-settings-button" side="top" class="pp-tooltip">
+<span class="pp-tooltip-text">Settings</span>
+</media-tooltip>
+<media-menu side="top" align="end" class="pp-menu" id="{{uid}}-settings">
+<media-menu-content class="pp-menu-content">
+<media-menu-item commandfor="{{uid}}-speed" class="pp-menu-item pp-menu-trigger">
+<media-icon family="portfolio" name="speed" class="pp-icon pp-menu-icon">
+</media-icon>
+<span class="pp-menu-label">Speed</span>
+<span class="pp-menu-hint">
+<span data-part="value" class="pp-menu-value">
+</span>
+<media-icon family="portfolio" name="chevron" class="pp-icon pp-menu-chevron">
+</media-icon>
+</span>
+</media-menu-item>
+<media-menu-content class="pp-menu-content" id="{{uid}}-speed">
+<media-menu-item class="pp-menu-item pp-menu-back">
+<media-icon family="portfolio" name="chevron" class="pp-icon pp-menu-chevron">
+</media-icon>
+<span class="pp-menu-label">Speed</span>
+</media-menu-item>
+<media-menu-separator class="pp-menu-separator">
+</media-menu-separator>
+<media-playback-rate-radio-group rates="0.5 0.75 1 1.25 1.5 2" class="pp-menu-group">
+<template>
+<media-menu-radio-item class="pp-menu-item pp-menu-option">
+<span data-part="label" class="pp-menu-label">
+</span>
+<media-menu-item-indicator force-mount class="pp-menu-check">
+<media-icon family="portfolio" name="check" class="pp-icon">
+</media-icon>
+</media-menu-item-indicator>
+</media-menu-radio-item>
+</template>
+</media-playback-rate-radio-group>
+</media-menu-content>
+<media-menu-item commandfor="{{uid}}-captions" class="pp-menu-item pp-menu-trigger">
+<media-icon family="portfolio" name="captions" class="pp-icon pp-menu-icon">
+</media-icon>
+<span class="pp-menu-label">Captions</span>
+<span class="pp-menu-hint">
+<span data-part="value" class="pp-menu-value">
+</span>
+<media-icon family="portfolio" name="chevron" class="pp-icon pp-menu-chevron">
+</media-icon>
+</span>
+</media-menu-item>
+<media-menu-content class="pp-menu-content" id="{{uid}}-captions">
+<media-menu-item class="pp-menu-item pp-menu-back">
+<media-icon family="portfolio" name="chevron" class="pp-icon pp-menu-chevron">
+</media-icon>
+<span class="pp-menu-label">Captions</span>
+</media-menu-item>
+<media-menu-separator class="pp-menu-separator">
+</media-menu-separator>
+<media-captions-radio-group class="pp-menu-group">
+<template>
+<media-menu-radio-item class="pp-menu-item pp-menu-option">
+<span data-part="label" class="pp-menu-label">
+</span>
+<media-menu-item-indicator force-mount class="pp-menu-check">
+<media-icon family="portfolio" name="check" class="pp-icon">
+</media-icon>
+</media-menu-item-indicator>
+</media-menu-radio-item>
+</template>
+</media-captions-radio-group>
+</media-menu-content>
+<media-menu-checkbox-item class="pp-menu-item pp-menu-switch pp-notes-toggle" hidden>
+<media-icon family="portfolio" name="notes" class="pp-icon pp-menu-icon">
+</media-icon>
+<span class="pp-menu-label">Notes</span>
+<span class="pp-switch" aria-hidden="true"></span>
+</media-menu-checkbox-item>
+</media-menu-content>
+</media-menu>
 <media-fullscreen-button class="pp-button pp-fullscreen" id="{{uid}}-fullscreen">
 <media-icon family="portfolio" name="fullscreen-enter" class="pp-icon pp-fullscreen-enter-icon">
 </media-icon>
@@ -175,7 +288,13 @@
 </media-hotkey>
 <media-hotkey keys="End" action="seekToPercent" value="100">
 </media-hotkey>
+<media-hotkey keys="&gt;" action="speedUp">
+</media-hotkey>
+<media-hotkey keys="&lt;" action="speedDown">
+</media-hotkey>
 <media-hotkey keys="f" action="toggleFullscreen">
+</media-hotkey>
+<media-hotkey keys="c" action="toggleSubtitles">
 </media-hotkey>
 <media-gesture type="tap" action="togglePaused" pointer="mouse" region="center">
 </media-gesture>
@@ -202,7 +321,9 @@
 </media-volume-indicator-value>
 </media-volume-indicator-fill>
 </media-volume-indicator>
-<media-status-indicator actions="toggleFullscreen" class="pp-indicator pp-status-indicator">
+<media-status-indicator actions="toggleFullscreen, toggleSubtitles" class="pp-indicator pp-status-indicator">
+<media-icon family="portfolio" name="captions" class="pp-icon pp-status-captions-icon">
+</media-icon>
 <media-icon family="portfolio" name="fullscreen-enter" class="pp-icon pp-status-fullscreen-enter-icon">
 </media-icon>
 <media-icon family="portfolio" name="fullscreen-exit" class="pp-icon pp-status-fullscreen-exit-icon">

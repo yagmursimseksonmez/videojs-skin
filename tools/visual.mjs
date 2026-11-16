@@ -16,18 +16,21 @@ await page.waitForFunction(() => [...document.querySelectorAll('video')].every((
 const at = (id, t) =>
   page.evaluate(([i, time]) => { const v = document.querySelector(`[data-case=${i}] video`); v.currentTime = time; }, [id, t]);
 
+// The design notes on, as a viewer turns them on in Settings (one switch for the page).
+await page.evaluate(() => document.querySelector('.pp-notes-toggle').click());
 // HealthBar: stopped in the achievements, the chapter discs up.
 await at('healthbar', 5.2);
 // iKeep: over a white frame, discs put away: the reading line and the yellow play disc.
 await at('ikeep', 1.3);
 await sleep(600);
 await page.locator('[data-case=ikeep] .pp-chapters-button').click();
-// PlayMate: playing in its third chapter, pointing at the fifth on the line.
-await at('playmate', 16.2);
-await page.locator('[data-case=playmate] .pp-play').click();
+// The Chengel promo: playing while it solves a crossword, the pointer over the frame, so its design note stands
+// pinned to the dot.
+await at('chengel-promo', 6.4);
+await page.locator('[data-case="chengel-promo"] .pp-play').click();
 await sleep(1200);
-const seek = await page.locator('[data-case=playmate] .pp-seek').boundingBox();
-await page.mouse.move(seek.x + seek.width * 0.57, seek.y + seek.height / 2, { steps: 4 });
+const frame = await page.locator('[data-case="chengel-promo"] .pp').boundingBox();
+await page.mouse.move(frame.x + frame.width * 0.8, frame.y + frame.height * 0.3, { steps: 4 });
 await sleep(900);
 await page.screenshot({ path: `${out}portfolio-player.png` });
 await browser.close();

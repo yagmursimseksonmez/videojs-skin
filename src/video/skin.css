@@ -1,8 +1,8 @@
 /* Portfolio player.
    The case pages of yagmursimseksonmez.com show a reading line with a yellow dot for every page; here the seek bar is
-   that line, with a dot for every chapter of the demo. When the video stops, the chapters come up as discs, like the
-   projects on the homepage, so a viewer can jump to the part of the case they care about. Dark #202020, Inter, the
-   portfolio's yellow, and controls that stay out of the way. */
+   that line, with a dot for every chapter of the demo. The player is a slide projector: the video is the picture on its
+   screen, the controls are its deck, the chapters are slides from its tray that come up when the video stops, and
+   reverse and advance move one chapter at a time. Its lamp is the portfolio's yellow; the body is #202020; Inter. */
 
 @property --media-slider-fill {
   syntax: '<percentage>';
@@ -18,34 +18,58 @@
 
 .pp {
   --pp-page: #202020;
-  --pp-ink: #f4f4f2;
-  --pp-muted: rgb(244 244 242 / 0.78);
-  --pp-faint: rgb(244 244 242 / 0.34);
+  --pp-ink: #f4f1ea;
+  --pp-muted: rgb(244 241 234 / 0.74);
+  --pp-faint: rgb(244 241 234 / 0.3);
   --pp-accent: #ffd100;
   --pp-on-accent: #202020;
   --pp-shade: 20 20 20;
-  --pp-glass: rgb(38 39 38 / 0.92);
-  --pp-hairline: inset 0 0 0 1px rgb(255 255 255 / 0.12);
-  --pp-elevation: 0 8px 32px rgb(0 0 0 / 0.28), 0 2px 8px rgb(0 0 0 / 0.2);
+  /* The projector: a graphite body, keys that press in, a display lit by the lamp, cream slide mounts. */
+  --pp-body: #262523;
+  --pp-body-edge: #191817;
+  --pp-key: linear-gradient(#3b3936, #2c2a28);
+  --pp-key-shadow: inset 0 1px 0 rgb(255 255 255 / 0.13), inset 0 -2px 0 rgb(0 0 0 / 0.28), 0 2px 0 #0e0d0c,
+    0 3px 7px rgb(0 0 0 / 0.35);
+  --pp-key-pressed: inset 0 2px 5px rgb(0 0 0 / 0.55), 0 0 0 #0e0d0c;
+  --pp-lamp: linear-gradient(#ffe36b, #ffd100 55%, #f0c200);
+  --pp-display: #121110;
+  --pp-display-ink: #ffd100;
+  --pp-display-glow: 0 0 7px rgb(255 209 0 / 0.45);
+  --pp-display-font: 'Doto', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --pp-groove: inset 0 1px 3px rgb(0 0 0 / 0.85), 0 1px 0 rgb(255 255 255 / 0.07);
+  --pp-mount: #eee8da;
+  --pp-glass: rgb(34 33 31 / 0.97);
+  --pp-hairline: inset 0 1px 0 rgb(255 255 255 / 0.09), inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  --pp-elevation: 0 12px 32px rgb(0 0 0 / 0.42), 0 2px 6px rgb(0 0 0 / 0.3);
   --pp-font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --pp-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --pp-fast: 160ms;
   --pp-slow: 260ms;
-  --pp-radius: 16px;
-  --pp-letterbox: #1a1a1a;
+  --pp-radius: 18px;
+  --pp-letterbox: #0b0b0a;
+  /* The frame around the picture (its sides can be wider), and the deck's height (the skin sets it to the deck as laid
+     out). */
+  --pp-bezel: 10px;
+  --pp-bezel-x: var(--pp-bezel);
+  --pp-deck: 112px;
+  --pp-screen: var(--pp-bezel) var(--pp-bezel-x) var(--pp-deck);
   --pp-disc: 64px;
   --pp-preview: 92px;
-  /* How far the discs zoom into the frame: above 1 for wide videos with the subject in the middle. */
+  /* How far the slides zoom into the frame: above 1 for wide videos with the subject in the middle. */
   --pp-disc-zoom: 1;
   --pp-big-play: 72px;
   --pp-ring: 0 0 0 2px rgb(var(--pp-shade) / 0.9);
 
   position: relative;
   display: block;
+  /* The picture keeps the video's shape; the bezel and the deck are added around it. */
+  box-sizing: content-box;
+  padding: var(--pp-screen);
   overflow: hidden;
   container: pp / inline-size;
   border-radius: var(--pp-radius);
-  background: var(--pp-letterbox);
+  background: linear-gradient(#2c2b28, var(--pp-body) 35%, var(--pp-body-edge));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.09), inset 0 0 0 1px rgb(255 255 255 / 0.04);
   color: var(--pp-ink);
   font: 400 14px/1.3 var(--pp-font);
   letter-spacing: 0;
@@ -69,7 +93,19 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  border-radius: inherit;
+  border-radius: 8px;
+  background: var(--pp-letterbox);
+}
+
+/* The screen: the picture sits a little into the body, dimmer at its corners, as a projected image is. */
+.pp::before {
+  content: '';
+  position: absolute;
+  inset: var(--pp-screen);
+  border-radius: 8px;
+  background: radial-gradient(130% 130% at 50% 42%, rgb(0 0 0 / 0) 58%, rgb(0 0 0 / 0.32));
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.7), inset 0 2px 10px rgb(0 0 0 / 0.55);
+  pointer-events: none;
 }
 
 /* The player as a whole takes focus from the keyboard: a ring inside its edge, yellow on a dark line. */
@@ -90,7 +126,9 @@
 
 .pp-poster {
   position: absolute;
-  inset: 0;
+  inset: var(--pp-screen);
+  overflow: hidden;
+  border-radius: 8px;
   pointer-events: none;
   transition: opacity var(--pp-slow) var(--pp-ease);
 }
@@ -108,51 +146,31 @@
 
 /* ---------------------------------------------------------------- scrim */
 
-/* The shade under the controls. Its stops are in pixels, so the text above the line always sits on the same depth of
-   shade, whether the player is a phone or a wall, and stays readable over a white or a yellow frame. */
+/* With the slides up, the picture steps back. */
 .pp-scrim {
   position: absolute;
-  inset: 0;
+  inset: var(--pp-screen);
+  overflow: hidden;
+  border-radius: 8px;
   pointer-events: none;
-  transition: opacity var(--pp-slow) var(--pp-ease);
 }
 
-.pp-scrim::before,
 .pp-scrim::after {
   content: '';
   position: absolute;
   inset: 0;
-  transition: opacity var(--pp-slow) var(--pp-ease);
-}
-
-.pp-scrim::before {
-  background: linear-gradient(
-    to top,
-    rgb(var(--pp-shade) / 0.94) 0,
-    rgb(var(--pp-shade) / 0.88) 72px,
-    rgb(var(--pp-shade) / 0.8) 104px,
-    rgb(var(--pp-shade) / 0.42) 150px,
-    rgb(var(--pp-shade) / 0) 200px
-  );
-}
-
-/* With the discs up, the whole frame steps back. */
-.pp-scrim::after {
   opacity: 0;
   background: linear-gradient(
     to top,
     rgb(var(--pp-shade) / 0.95) 0,
-    rgb(var(--pp-shade) / 0.88) 250px,
+    rgb(var(--pp-shade) / 0.88) 220px,
     rgb(var(--pp-shade) / 0.55) 100%
   );
+  transition: opacity var(--pp-slow) var(--pp-ease);
 }
 
 .pp[data-pp-chapters] .pp-scrim::after {
   opacity: 1;
-}
-
-.pp-scrim:not([data-visible]) {
-  opacity: 0;
 }
 
 /* ---------------------------------------------------------------- layout */
@@ -162,11 +180,16 @@
   inset: 0;
   display: flex;
   flex-direction: column;
+  padding: var(--pp-bezel) var(--pp-bezel-x) 0;
   pointer-events: none;
+}
+
+/* The deck stays, as a projector's does; what is over the picture fades while the controls rest. */
+.pp-stage {
   transition: opacity var(--pp-slow) var(--pp-ease);
 }
 
-.pp-content:not([data-visible]) {
+.pp-content:not([data-visible]) :is(.pp-stage, .pp-discs) {
   opacity: 0;
 }
 
@@ -175,7 +198,7 @@
   display: contents;
 }
 
-.pp-content:not([data-visible]) :is(.pp-bar, .pp-discs, .pp-big-play) {
+.pp-content:not([data-visible]) :is(.pp-discs, .pp-big-play) {
   pointer-events: none;
 }
 
@@ -187,16 +210,68 @@
   min-height: 0;
 }
 
+/* The deck: the display on top, with the maker's name and the lamp's light beside it, then the line and the keys. It
+   runs the full width, under the bezel. */
 .pp-bar {
+  position: relative;
   pointer-events: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 0 12px 6px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 0 calc(-1 * var(--pp-bezel-x));
+  padding: 12px 14px 14px;
+}
+
+.pp-bar > .pp-label {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.pp-bar > .pp-row {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* Printed on the body, as on a machine. */
+.pp-bar::before {
+  content: 'Portfolio projector';
+  grid-column: 2;
+  grid-row: 1;
+  color: rgb(244 241 234 / 0.45);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The lamp's light: on while the video plays. */
+.pp-bar::after {
+  content: '';
+  position: absolute;
+  top: 19px;
+  right: 14px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4a4641;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.6);
+  transition: background-color var(--pp-fast) var(--pp-ease), box-shadow var(--pp-fast) var(--pp-ease);
+}
+
+.pp:has(.pp-play:not([data-paused])) .pp-bar::after {
+  background: var(--pp-accent);
+  box-shadow: 0 0 8px 1px rgb(255 209 0 / 0.7);
+}
+
+.pp-bar::before {
+  margin-right: 16px;
 }
 
 /* ---------------------------------------------------------------- big play */
 
-/* A yellow disc, like the round buttons of the portfolio, while the video is stopped. */
+/* The lamp: a yellow disc, lit, while the video is stopped. */
 .pp-big-play {
   pointer-events: auto;
   display: grid;
@@ -204,9 +279,10 @@
   width: var(--pp-big-play);
   height: var(--pp-big-play);
   border-radius: 50%;
-  background: var(--pp-accent);
+  background: radial-gradient(circle at 50% 32%, #ffe680, var(--pp-accent) 58%, #eebf00);
   color: var(--pp-on-accent);
-  box-shadow: var(--pp-elevation);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.4), inset 0 -3px 0 rgb(0 0 0 / 0.14), 0 0 0 6px rgb(32 31 29 / 0.55),
+    0 10px 24px rgb(0 0 0 / 0.45), 0 0 44px rgb(255 209 0 / 0.3);
   cursor: pointer;
   touch-action: manipulation;
   transition:
@@ -232,7 +308,122 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pp-big-play:hover {
-    filter: brightness(0.92);
+    filter: brightness(1.05);
+  }
+}
+
+/* ---------------------------------------------------------------- end card */
+
+/* When the video ends, a panel on the screen says where to get the app: the link, and a QR code on a slide mount for
+   whoever is watching at a desk. The picture steps back behind it, and it takes the place of the lamp and the slides. */
+.pp-end {
+  position: relative;
+  pointer-events: auto;
+  display: none;
+  grid-template-columns: auto minmax(0, 18rem);
+  align-items: center;
+  gap: 24px;
+  max-width: calc(100% - 32px);
+  padding: 20px 24px 20px 20px;
+  border-radius: 16px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  text-align: start;
+}
+
+.pp:has(.pp-play[data-ended]) .pp-end {
+  display: grid;
+}
+
+.pp:has(.pp-end):has(.pp-play[data-ended]) :is(.pp-big-play, .pp-discs) {
+  display: none;
+}
+
+.pp:has(.pp-end):has(.pp-play[data-ended]) .pp-scrim::after {
+  opacity: 1;
+}
+
+/* The tray key doesn't light for slides the panel keeps out of sight. */
+.pp:has(.pp-end):has(.pp-play[data-ended]) .pp-chapters-button[aria-expanded='true'] {
+  color: var(--pp-ink);
+}
+
+.pp:has(.pp-end):has(.pp-play[data-ended]) .pp-chapters-button[aria-expanded='true']::after {
+  display: none;
+}
+
+.pp-end-qr {
+  display: block;
+  width: 140px;
+  height: 140px;
+  padding: 8px;
+  border-radius: 4px;
+  background: var(--pp-mount);
+  box-shadow: 0 6px 14px rgb(0 0 0 / 0.4);
+}
+
+.pp-end-body {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Written with the player's own prefix, so a page's styles for paragraphs don't reach the panel. */
+.pp .pp-end-body p {
+  margin: 0;
+  color: var(--pp-muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.pp .pp-end-body .pp-end-title {
+  color: var(--pp-ink);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* The link is a key of the deck, the lamp's yellow. */
+.pp-end-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: var(--pp-lamp);
+  box-shadow: var(--pp-key-shadow);
+  color: var(--pp-on-accent);
+  font: 600 14px/1.2 var(--pp-font);
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+.pp-end-link:active {
+  translate: 0 2px;
+  box-shadow: var(--pp-key-pressed);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pp-end-link:hover {
+    filter: brightness(1.05);
+  }
+}
+
+.pp .pp-end-hint {
+  font-size: 12.5px;
+}
+
+/* A phone can't scan its own screen: there the panel is the link alone. */
+@media (pointer: coarse) {
+  .pp-end {
+    grid-template-columns: minmax(0, 18rem);
+  }
+
+  .pp-end-qr,
+  .pp-end-hint {
+    display: none;
   }
 }
 
@@ -272,7 +463,7 @@
   }
 }
 
-/* ---------------------------------------------------------------- icons and buttons */
+/* ---------------------------------------------------------------- icons and keys */
 
 .pp-icon {
   --pp-icon: 24px;
@@ -288,6 +479,7 @@
   height: 100%;
 }
 
+/* The deck's keys: square, raised, and they press in. */
 .pp-button {
   position: relative;
   display: grid;
@@ -298,14 +490,23 @@
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 50%;
-  background: transparent;
+  border-radius: 10px;
+  background: var(--pp-key);
+  box-shadow: var(--pp-key-shadow);
   color: var(--pp-ink);
   font: inherit;
   cursor: pointer;
   touch-action: manipulation;
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.45));
-  transition: background-color var(--pp-fast) var(--pp-ease), color var(--pp-fast) var(--pp-ease);
+  transition: color var(--pp-fast) var(--pp-ease), filter var(--pp-fast) var(--pp-ease), translate 80ms var(--pp-ease);
+}
+
+.pp-button .pp-icon {
+  --pp-icon: 22px;
+}
+
+.pp-button:active {
+  translate: 0 2px;
+  box-shadow: var(--pp-key-pressed);
 }
 
 .pp-button[hidden],
@@ -313,20 +514,53 @@
   display: none;
 }
 
+.pp-button[aria-disabled='true'] {
+  color: var(--pp-faint);
+  cursor: default;
+}
+
+.pp-button[aria-disabled='true']:active {
+  translate: none;
+  box-shadow: var(--pp-key-shadow);
+}
+
 @media (hover: hover) and (pointer: fine) {
-  .pp-button:hover {
-    background: rgb(244 244 242 / 0.14);
+  .pp-button:not([aria-disabled='true']):hover {
+    filter: brightness(1.18);
   }
 }
 
+/* Play is the lamp key: yellow, a little wider. */
+.pp-play {
+  width: 56px;
+  background: var(--pp-lamp);
+  color: var(--pp-on-accent);
+}
+
+/* A key whose panel is open lights up: its icon in the lamp's yellow and a small light above it. */
 .pp-button[aria-expanded='true'] {
   color: var(--pp-accent);
 }
 
+.pp-button[aria-expanded='true']::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--pp-accent);
+  box-shadow: 0 0 6px var(--pp-accent);
+}
+
 /* Focus: the portfolio's yellow outline, with a dark line inside it so it shows on yellow footage too. */
-.pp :is(.pp-button, .pp-big-play, .pp-seek-thumb, .pp-volume-thumb, .pp-dialog-close):focus-visible {
+.pp :is(.pp-button, .pp-big-play, .pp-seek-thumb, .pp-volume-thumb, .pp-dialog-close, .pp-end-link):focus-visible {
   outline: 2px solid var(--pp-accent);
   outline-offset: 2px;
+}
+
+.pp :is(.pp-big-play, .pp-seek-thumb, .pp-volume-thumb, .pp-dialog-close):focus-visible {
   box-shadow: var(--pp-ring);
 }
 
@@ -364,36 +598,51 @@
   display: block;
 }
 
-/* ---------------------------------------------------------------- chapter label and time */
+/* ---------------------------------------------------------------- display */
 
+/* The deck's display: chapter, name and time in the lamp's yellow on a dark window, with faint scan lines. A note's pin
+   runs behind it. */
 .pp-label {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 18px;
-  padding: 0 8px 2px;
+  gap: 14px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(rgb(255 255 255 / 0) 0 2px, rgb(255 255 255 / 0.025) 2px 3px),
+    var(--pp-display);
+  box-shadow: var(--pp-groove);
+  color: var(--pp-display-ink);
+  font: 600 13px/1.25 var(--pp-display-font);
+  text-shadow: var(--pp-display-glow);
+  white-space: nowrap;
+}
+
+.pp-label:not(:has(.pp-chapter-count)) .pp-chapter {
+  display: none;
 }
 
 .pp-chapter {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 12px;
   min-width: 0;
-  font-size: 11.5px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--pp-accent);
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
 }
 
+/* The number first, as a slide counter reads, then the name. */
 .pp-chapter-count {
+  order: -1;
   flex: none;
-  color: var(--pp-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.pp-chapter-count > :not(.pp-chapter-current) {
+  opacity: 0.7;
 }
 
 .pp-chapter-title {
@@ -407,24 +656,81 @@
   align-items: baseline;
   gap: 4px;
   flex: none;
-  font-size: 13px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  color: var(--pp-ink);
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+.pp-time-label {
+  margin-inline-start: auto;
 }
 
 .pp-time-separator,
 .pp-time-duration {
-  color: var(--pp-muted);
+  opacity: 0.7;
 }
 
+/* The time lives on the display, so the row has room for the keys. */
 .pp-time-row {
-  margin-inline-start: 4px;
+  display: none;
 }
 
-.pp-time-label {
+/* ---------------------------------------------------------------- design notes */
+
+/* A note is a slide label over the bottom of the picture: the chapter, then one sentence on why. It moves along to
+   stand over its chapter, and a thin yellow line pins it to the chapter's dot on the deck. */
+.pp-note {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  z-index: 1;
   display: none;
+  width: max-content;
+  max-width: min(calc(100% - 24px), 23rem);
+  padding: 10px 14px 12px;
+  border-radius: 4px;
+  background: var(--pp-mount);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.45), 0 1px 0 rgb(255 255 255 / 0.5) inset;
+  color: #202020;
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-wrap: pretty;
+  translate: var(--pp-note-x, 12px) 0;
+  transition: translate var(--pp-slow) var(--pp-ease), opacity var(--pp-fast) var(--pp-ease);
+  pointer-events: none;
+}
+
+.pp-note[data-open] {
+  display: block;
+}
+
+.pp-note::before {
+  content: attr(data-chapter);
+  display: block;
+  margin-bottom: 4px;
+  color: rgb(32 32 32 / 0.68);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.pp-note::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: var(--pp-pin-x, 22px);
+  width: 2px;
+  height: var(--pp-pin-h, 0px);
+  translate: -50% 0;
+  border-radius: 1px;
+  background: var(--pp-accent);
+  box-shadow: 0 0 0 1px rgb(var(--pp-shade) / 0.6), 0 0 6px rgb(255 209 0 / 0.5);
+}
+
+/* While you point at the line, its preview tells the chapter instead; with the slides up, they do. */
+.pp:has(.pp-seek:is([data-pointing], [data-dragging])) .pp-note,
+.pp[data-pp-chapters] .pp-note {
+  opacity: 0;
 }
 
 /* ---------------------------------------------------------------- seek bar: the reading line */
@@ -432,8 +738,12 @@
 .pp-seek {
   position: relative;
   display: block;
-  height: 28px;
-  margin: 0 8px;
+  /* The thumb's lens sizes its copy of the line by the line's own box. */
+  container: pp-seek / size;
+  flex: 1;
+  min-width: 48px;
+  height: 44px;
+  margin: 0 10px;
   cursor: pointer;
   touch-action: none;
   outline: none;
@@ -454,47 +764,52 @@
   position: absolute;
   inset-inline: 0;
   top: 50%;
-  height: 2px;
+  height: 8px;
   translate: 0 -50%;
   transition: height var(--pp-fast) var(--pp-ease);
 }
 
 .pp-seek[data-interactive] .pp-seek-track {
-  height: 4px;
+  height: 10px;
 }
 
-/* The line under each chapter, the buffered part and the part already watched, each kept to its chapter. */
+/* The line is a groove in the deck, a section for each chapter; the buffered part a shade lighter, and the part already
+   watched lit by the lamp. */
 .pp-seek-track::before,
 .pp-seek-buffer,
 .pp-seek-fill {
   position: absolute;
   inset-block: 0;
   left: var(--media-slider-chapter-start, 0%);
-  border-radius: 2px;
+  border-radius: 5px;
 }
 
 .pp-seek-track::before {
   content: '';
   right: calc(100% - var(--media-slider-chapter-end, 100%));
-  background: var(--pp-faint);
-  box-shadow: 0 0 0 0.5px rgb(var(--pp-shade) / 0.4);
+  background: var(--pp-display);
+  box-shadow: var(--pp-groove);
 }
 
 .pp-seek-buffer {
   right: max(calc(100% - var(--media-slider-buffer, 0%)), calc(100% - var(--media-slider-chapter-end, 100%)));
-  background: rgb(244 244 242 / 0.5);
+  background: rgb(244 241 234 / 0.08);
 }
 
 .pp-seek-fill {
+  inset-block: 2px;
   right: max(calc(100% - var(--media-slider-fill, 0%)), calc(100% - var(--media-slider-chapter-end, 100%)));
+  margin-inline: 2px;
   background: var(--pp-accent);
+  box-shadow: 0 0 8px rgb(255 209 0 / 0.55);
 }
 
 .pp-seek[data-dragging] .pp-seek-fill {
   right: max(calc(100% - var(--media-slider-pointer, 0%)), calc(100% - var(--media-slider-chapter-end, 100%)));
 }
 
-/* A dot where each chapter starts: light ahead, yellow once you are past it, with a soft ring on the one playing. */
+/* A dot where each chapter starts, a slide's notch in the groove: dark ahead, lit once you are past it, with a glow on
+   the one playing. */
 .pp-seek-dot {
   position: absolute;
   top: 50%;
@@ -503,8 +818,8 @@
   height: 8px;
   translate: -50% -50%;
   border-radius: 50%;
-  background: rgb(244 244 242 / 0.82);
-  box-shadow: 0 0 0 1.5px rgb(var(--pp-shade) / 0.6);
+  background: #5a5650;
+  box-shadow: 0 0 0 2px var(--pp-display), 0 1px 0 2px rgb(255 255 255 / 0.06);
   pointer-events: none;
   transition: box-shadow var(--pp-fast) var(--pp-ease), scale var(--pp-fast) var(--pp-ease);
 }
@@ -519,7 +834,7 @@
 }
 
 .pp-seek-chapter[data-active] .pp-seek-dot {
-  box-shadow: 0 0 0 1.5px rgb(var(--pp-shade) / 0.6), 0 0 0 4px rgb(255 209 0 / 0.38);
+  box-shadow: 0 0 0 2px var(--pp-display), 0 0 10px 2px rgb(255 209 0 / 0.6);
 }
 
 .pp-seek-chapter[data-active] .pp-seek-dot::after {
@@ -530,18 +845,124 @@
   scale: 1.25;
 }
 
+/* The thumbs. The volume one is a metal knob; the seek bar's is a slide loupe, a metal ring with a magnifier in it. */
+.pp-seek-thumb,
+.pp-volume-thumb {
+  width: 18px;
+  height: 18px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.pp-volume-thumb {
+  background: radial-gradient(circle at 50% 30%, #f3eee4, #b9b3a8 70%, #8f8a81);
+  box-shadow: 0 0 0 1px #0e0d0c, 0 2px 5px rgb(0 0 0 / 0.55);
+}
+
 .pp-seek-thumb {
   position: absolute;
   top: 50%;
   left: var(--media-slider-fill, 0%);
   z-index: 2;
-  width: 14px;
-  height: 14px;
+  width: 26px;
+  height: 26px;
+  overflow: visible;
   translate: -50% -50%;
-  border-radius: 50%;
-  background: var(--pp-ink);
-  box-shadow: 0 0 0 1.5px rgb(var(--pp-shade) / 0.5), 0 2px 6px rgb(0 0 0 / 0.45);
   transition: scale var(--pp-fast) var(--pp-ease);
+}
+
+/* The loupe's ring, over its glass. */
+.pp-seek-thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.25), 0 0 0 3px #cfc9be, 0 0 0 4px #0e0d0c, 0 3px 8px 3px rgb(0 0 0 / 0.5);
+  background: radial-gradient(circle at 35% 25%, rgb(255 255 255 / 0.22), rgb(255 255 255 / 0) 45%);
+  pointer-events: none;
+}
+
+/* The glass: the deck under it, and a second copy of the line, twice as large, centred on the playhead. */
+.pp-lens {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--pp-body);
+  pointer-events: none;
+}
+
+.pp-lens > .pp-seek-chapters {
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  width: 100cqw;
+  height: 100cqh;
+  translate: calc(-1 * var(--media-slider-fill, 0%)) -50%;
+  transform-origin: var(--media-slider-fill, 0%) 50%;
+  scale: 2;
+}
+
+.pp-seek[data-dragging] .pp-lens > .pp-seek-chapters {
+  translate: calc(-1 * var(--media-slider-pointer, 0%)) -50%;
+  transform-origin: var(--media-slider-pointer, 0%) 50%;
+}
+
+/* Passing a chapter's dot, the lamp comes on behind the lens, as when a new slide drops into the light: the glass is
+   full of yellow at once, the ring glows, and the light dims again on the way to the next one. */
+.pp-lens::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 42%, #fff2a8, var(--pp-accent) 58%, #e3ad00);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pp-seek-thumb[data-pp-lit] .pp-lens::after {
+  animation: pp-lamp 1.1s ease-in;
+}
+
+.pp-seek-thumb[data-pp-lit]::after {
+  animation: pp-lamp-glow 1.1s ease-in;
+}
+
+@keyframes pp-lamp {
+  0%,
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pp-lamp-glow {
+  0%,
+  30% {
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 0.25),
+      0 0 0 3px #cfc9be,
+      0 0 0 4px #0e0d0c,
+      0 0 14px 6px rgb(255 209 0 / 0.55);
+  }
+}
+
+/* Calm: the light fades up instead of coming on at once. */
+@keyframes pp-lamp-calm {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  25%,
+  45% {
+    opacity: 1;
+  }
 }
 
 .pp-seek[data-dragging] .pp-seek-thumb {
@@ -549,18 +970,23 @@
   scale: 1.15;
 }
 
-.pp-seek-thumb:focus-visible {
-  box-shadow: var(--pp-ring), 0 2px 6px rgb(0 0 0 / 0.45);
+/* With focus from the keyboard, the thumb is full of yellow. */
+.pp .pp-volume-thumb:focus-visible {
+  background: var(--pp-accent);
 }
 
-/* The preview while pointing at the line: the frame in a disc, with the chapter and time under it. */
+.pp-seek-thumb:focus-visible .pp-lens::after {
+  opacity: 1;
+}
+
+/* The preview while pointing at the line: the frame on a slide, with the chapter and time under it. */
 .pp-preview {
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 22px);
   z-index: 3;
   display: grid;
   justify-items: center;
-  gap: 8px;
+  gap: 16px;
   pointer-events: none;
   opacity: 0;
   translate: 0 4px;
@@ -578,9 +1004,9 @@
   width: var(--pp-preview);
   height: var(--pp-preview);
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: 4px;
   background: var(--pp-page);
-  box-shadow: 0 0 0 2px var(--pp-ink), var(--pp-elevation);
+  box-shadow: 0 0 0 9px var(--pp-mount), 0 12px 24px 9px rgb(0 0 0 / 0.45);
 }
 
 .pp-preview-disc:has(.pp-preview-thumbnail:is([data-hidden], [data-error])) {
@@ -601,8 +1027,9 @@
   align-items: baseline;
   gap: 8px;
   max-width: 220px;
+  position: relative;
   padding: 6px 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--pp-glass);
   box-shadow: var(--pp-hairline), var(--pp-elevation);
   white-space: nowrap;
@@ -625,16 +1052,18 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------------------------------------------------------------- controls row */
+/* ---------------------------------------------------------------- keys row */
 
 .pp-row {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
   min-width: 0;
 }
 
+/* The line takes the middle of a wide deck; the spacer only matters once the line moves to its own row. */
 .pp-spacer {
+  display: none;
   flex: 1;
 }
 
@@ -646,7 +1075,7 @@
   padding: 14px 0;
   width: 40px;
   border: 0;
-  border-radius: 20px;
+  border-radius: 12px;
   background: var(--pp-glass);
   box-shadow: var(--pp-hairline), var(--pp-elevation);
   color: var(--pp-ink);
@@ -673,38 +1102,40 @@
   outline: none;
 }
 
+/* The same groove, standing up, lit to the volume. */
 .pp-volume-track {
   position: absolute;
   inset-block: 0;
   left: 50%;
-  width: 4px;
+  width: 8px;
   translate: -50% 0;
-  border-radius: 2px;
-  background: var(--pp-faint);
+  border-radius: 4px;
+  background: var(--pp-display);
+  box-shadow: var(--pp-groove);
 }
 
 .pp-volume-fill {
   position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: var(--media-slider-fill, 0%);
-  border-radius: inherit;
+  inset-inline: 2px;
+  bottom: 2px;
+  height: calc(var(--media-slider-fill, 0%) - 4px);
+  min-height: 0;
+  border-radius: 2px;
   background: var(--pp-accent);
+  box-shadow: 0 0 8px rgb(255 209 0 / 0.55);
 }
 
 .pp-volume-thumb {
   position: absolute;
   left: 50%;
   bottom: var(--media-slider-fill, 0%);
-  width: 14px;
-  height: 14px;
   translate: -50% 50%;
-  border-radius: 50%;
-  background: var(--pp-ink);
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.45);
 }
 
-/* ---------------------------------------------------------------- chapter discs */
+/* ---------------------------------------------------------------- chapter slides */
+
+/* The chapters come up as slides from the tray: a frame of each in a cream mount, the one playing in a yellow one. The
+   element and its parts keep the name discs, after the portfolio's round project discs they began as. */
 
 .pp-discs {
   pointer-events: auto;
@@ -735,14 +1166,14 @@
 .pp-discs-list {
   display: flex;
   justify-content: safe center;
-  gap: 10px;
+  gap: 24px;
   margin: 0;
-  padding: 6px 16px 2px;
+  padding: 14px 20px 4px;
   list-style: none;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
-  scroll-padding-inline: 16px;
+  scroll-padding-inline: 20px;
   scrollbar-width: none;
   mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 16px), transparent);
 }
@@ -761,7 +1192,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  width: calc(var(--pp-disc) + 26px);
+  width: calc(var(--pp-disc) + 22px);
   margin: 0;
   padding: 4px 0 2px;
   border: 0;
@@ -780,14 +1211,19 @@
   width: var(--pp-disc);
   height: var(--pp-disc);
   overflow: hidden;
-  border-radius: 50%;
+  margin-bottom: 8px;
+  border-radius: 3px;
   background: var(--pp-page);
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.16), 0 6px 18px rgb(0 0 0 / 0.35);
+  box-shadow: 0 0 0 8px var(--pp-mount), 0 10px 18px 8px rgb(0 0 0 / 0.45);
   transition: scale var(--pp-fast) var(--pp-ease), box-shadow var(--pp-fast) var(--pp-ease);
 }
 
-/* A thumbnail scales its storyboard tile to its CSS min and max sizes. Both mins at the disc's size and one max (the
-   tile's longer side left free) make it cover the disc; centred in it, the disc shows the middle of the frame. */
+.pp-disc[aria-current] .pp-disc-image {
+  box-shadow: 0 0 0 8px var(--pp-accent), 0 10px 18px 8px rgb(0 0 0 / 0.45), 0 0 30px 10px rgb(255 209 0 / 0.25);
+}
+
+/* A thumbnail scales its storyboard tile to its CSS min and max sizes. Both mins at the slide's size and one max (the
+   tile's longer side left free) make it cover the slide; centred in it, the slide shows the middle of the frame. */
 .pp-disc-thumbnail,
 .pp-preview-thumbnail {
   --pp-cover: calc(var(--pp-disc) * var(--pp-disc-zoom));
@@ -848,13 +1284,17 @@
 @media (hover: hover) and (pointer: fine) {
   .pp-disc:hover .pp-disc-image {
     scale: 1.05;
-    box-shadow: 0 0 0 2px var(--pp-ink), 0 8px 22px rgb(0 0 0 / 0.4);
+    box-shadow: 0 0 0 8px #fffaf0, 0 14px 24px 8px rgb(0 0 0 / 0.5);
+  }
+
+  .pp-disc[aria-current]:hover .pp-disc-image {
+    box-shadow: 0 0 0 8px var(--pp-accent), 0 14px 24px 8px rgb(0 0 0 / 0.5), 0 0 30px 10px rgb(255 209 0 / 0.25);
   }
 }
 
 .pp-disc:focus-visible .pp-disc-image {
   outline: 2px solid var(--pp-accent);
-  outline-offset: 3px;
+  outline-offset: 11px;
 }
 
 .pp-disc:focus-visible .pp-disc-title {
@@ -865,28 +1305,249 @@
 
 /* ---------------------------------------------------------------- progress hairline */
 
-/* What is left of the line while the controls rest during playback: the watched part in yellow along the bottom edge. */
+/* The deck stays while the controls rest, so the hairline the player used to leave isn't needed. */
 .pp-progress {
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 1;
-  height: 3px;
-  background: rgb(var(--pp-shade) / 0.55);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--pp-slow) var(--pp-ease);
+  display: none;
 }
 
-.pp-progress::before {
+/* ---------------------------------------------------------------- captions */
+
+/* Captions, when a case has them: the portfolio's type on a dark plate that reads over any picture. They sit just off
+   the bottom of the screen, above the deck; the slides cover them while they are up. */
+.pp video::cue {
+  background-color: rgb(20 20 20 / 0.86);
+  color: #f4f4f2;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.35;
+}
+
+/* Above the scrim, below the seek preview. */
+.pp video::-webkit-media-text-track-container {
+  z-index: 1;
+  translate: 0 -12px;
+  transition: opacity var(--pp-fast) var(--pp-ease);
+  font-family: var(--pp-font);
+}
+
+.pp[data-pp-chapters] video::-webkit-media-text-track-container {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------- settings menu */
+
+/* Speed, captions and notes, a page each, on the same dark panel as the volume popover. The menu sizes itself to the page
+   that is showing; pages slide a little and fade. */
+.pp-menu {
+  --media-menu-side-offset: 6px;
+  box-sizing: border-box;
+  width: var(--media-menu-width, auto);
+  height: var(--media-menu-height, auto);
+  min-width: 13.5rem;
+  max-width: var(--media-menu-available-width, none);
+  max-height: min(var(--media-menu-available-height, 22rem), 22rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--pp-glass);
+  box-shadow: var(--pp-hairline), var(--pp-elevation);
+  color: var(--pp-ink);
+  font: 400 14px/1.2 var(--pp-font);
+  overflow: hidden;
+  overscroll-behavior: none;
+  transition:
+    opacity var(--pp-fast) var(--pp-ease),
+    translate var(--pp-fast) var(--pp-ease),
+    width var(--pp-fast) var(--pp-ease),
+    height var(--pp-fast) var(--pp-ease);
+}
+
+.pp-menu:not([data-open]) {
+  display: none;
+}
+
+.pp-menu:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  translate: 0 4px;
+}
+
+.pp-menu-content {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: inherit;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: none;
+  outline: none;
+  transition: opacity var(--pp-fast) var(--pp-ease), translate var(--pp-fast) var(--pp-ease);
+}
+
+.pp-menu-content[hidden] {
+  display: none;
+}
+
+.pp-menu-content[data-child-open] {
+  opacity: 0;
+  translate: -24px 0;
+  pointer-events: none;
+}
+
+.pp-menu-content[data-submenu]:is([data-starting-style], [data-ending-style]) {
+  opacity: 0;
+  translate: 24px 0;
+  pointer-events: none;
+}
+
+.pp-menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pp-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  transition: background-color var(--pp-fast) var(--pp-ease);
+}
+
+.pp-menu-item:is([hidden], [data-availability='unavailable'], [data-availability='unsupported']) {
+  display: none;
+}
+
+.pp-menu-item:is([data-highlighted='pointer'], :focus-visible) {
+  background: rgb(244 241 234 / 0.1);
+}
+
+/* From the keyboard the item in focus also gets the same yellow ring as the keys. */
+.pp-menu-item:focus-visible {
+  outline: 2px solid var(--pp-accent);
+  outline-offset: -2px;
+}
+
+.pp-menu-item[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pp-menu-item .pp-icon {
+  --pp-icon: 20px;
+}
+
+.pp-menu-icon,
+.pp-menu-chevron {
+  color: var(--pp-muted);
+}
+
+.pp-menu-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  margin-inline-start: auto;
+  padding-inline-start: 16px;
+  color: var(--pp-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pp-menu-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pp-menu-chevron:dir(rtl) {
+  scale: -1 1;
+}
+
+.pp-menu-back {
+  gap: 6px;
+  padding-inline-start: 6px;
+  font-weight: 500;
+}
+
+.pp-menu-back .pp-menu-chevron {
+  scale: -1 1;
+}
+
+.pp-menu-back .pp-menu-chevron:dir(rtl) {
+  scale: none;
+}
+
+.pp-menu-separator {
+  display: block;
+  height: 1px;
+  margin: 3px 6px;
+  background: rgb(244 241 234 / 0.1);
+}
+
+.pp-menu-option {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The speed and captions in use: yellow, with a check, like the slide playing. */
+.pp-menu-option[aria-checked='true'] {
+  color: var(--pp-accent);
+}
+
+.pp-menu-check {
+  display: block;
+  margin-inline-start: auto;
+  opacity: 0;
+}
+
+.pp-menu-option[aria-checked='true'] .pp-menu-check {
+  opacity: 1;
+}
+
+/* Notes: a switch in a groove, lit when on. */
+.pp-switch {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 20px;
+  margin-inline-start: auto;
+  border-radius: 10px;
+  background: var(--pp-display);
+  box-shadow: var(--pp-groove);
+  transition: background-color var(--pp-fast) var(--pp-ease);
+}
+
+.pp-switch::after {
   content: '';
   position: absolute;
-  inset: 1px auto 0 0;
-  width: calc(var(--pp-progress, 0) * 100%);
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #f3eee4, #b9b3a8 70%, #8f8a81);
+  box-shadow: 0 0 0 1px #0e0d0c, 0 1px 3px rgb(0 0 0 / 0.5);
+  transition: translate var(--pp-fast) var(--pp-ease);
+}
+
+.pp-menu-switch[aria-checked='true'] .pp-switch {
   background: var(--pp-accent);
 }
 
-.pp:has(.pp-content:not([data-visible])) .pp-progress {
-  opacity: 1;
+.pp-menu-switch[aria-checked='true'] .pp-switch::after {
+  translate: 14px 0;
+}
+
+.pp-menu-switch[aria-checked='true'] .pp-switch:dir(rtl)::after {
+  translate: -14px 0;
 }
 
 /* ---------------------------------------------------------------- tooltips */
@@ -920,7 +1581,7 @@
 .pp-tooltip-key:not(:empty) {
   padding: 1px 6px;
   border-radius: 5px;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  box-shadow: inset 0 0 0 1px rgb(32 32 32 / 0.3);
   color: var(--pp-muted);
   font-size: 11.5px;
 }
@@ -940,6 +1601,7 @@
 }
 
 .pp-indicator {
+  position: relative;
   grid-area: 1 / 1;
   display: flex;
   align-items: center;
@@ -977,6 +1639,7 @@
 .pp-volume-indicator:is([data-muted], [data-level='off']) .pp-indicator-off-icon,
 .pp-volume-indicator:not([data-muted])[data-level='low'] .pp-indicator-low-icon,
 .pp-volume-indicator:not([data-muted]):is([data-level='medium'], [data-level='high']) .pp-indicator-high-icon,
+.pp-status-indicator[data-action='toggleSubtitles'] .pp-status-captions-icon,
 .pp-status-indicator[data-action='toggleFullscreen']:not([data-fullscreen]) .pp-status-fullscreen-enter-icon,
 .pp-status-indicator[data-action='toggleFullscreen'][data-fullscreen] .pp-status-fullscreen-exit-icon {
   display: block;
@@ -1036,6 +1699,7 @@
   border: 0;
   border-radius: 22px;
   background: var(--pp-accent);
+  box-shadow: var(--pp-key-shadow);
   color: var(--pp-on-accent);
   font: 500 14px/1 var(--pp-font);
   cursor: pointer;
@@ -1050,9 +1714,254 @@
   white-space: nowrap;
 }
 
+/* ---------------------------------------------------------------- desk theme */
+
+/* The other look, data-pp-theme="desk": the player stands on a designer's desk. The video is on a monitor against the
+   wall, and the controls lie on the desk in front of it: a sticky note for the display, keycaps for the keys, a ruler
+   for the line with the loupe on it, polaroids for the chapters and sticky notes for the design notes. On a wide player
+   a plant, a mug and a pencil cup stand beside the monitor. */
+.pp[data-pp-theme='desk'] {
+  --pp-bezel: 18px;
+  --pp-sticky: #ffe271;
+  --pp-key: linear-gradient(#f6f3ec, #e2ddd2);
+  --pp-key-shadow: inset 0 1px 0 #fff, 0 3px 0 #a9a296, 0 5px 9px rgb(0 0 0 / 0.38);
+  --pp-key-pressed: inset 0 1px 0 #fff, 0 1px 0 #a9a296, 0 2px 4px rgb(0 0 0 / 0.3);
+  --pp-desk-top: calc(100% - var(--pp-deck) + 30px);
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0) var(--pp-desk-top),
+      #b08560 var(--pp-desk-top),
+      #b08560 calc(var(--pp-desk-top) + 2px),
+      #8a6446 calc(var(--pp-desk-top) + 2px),
+      #6a4b35 100%
+    ),
+    repeating-linear-gradient(rgb(255 255 255 / 0.025) 0 2px, rgb(255 255 255 / 0) 2px 9px),
+    radial-gradient(70% 80% at 12% 0%, rgb(255 209 0 / 0.07), rgb(255 209 0 / 0) 70%),
+    #25221f;
+}
+
+/* The monitor: a dark frame around the picture, under it. */
+.pp[data-pp-theme='desk']::before {
+  inset: calc(var(--pp-bezel) - 9px) calc(var(--pp-bezel-x) - 9px) calc(var(--pp-deck) - 12px);
+  z-index: -1;
+  border-radius: 14px;
+  background: linear-gradient(#1c1c1c, #121212);
+  box-shadow: 0 0 0 1px #000, 0 16px 30px rgb(0 0 0 / 0.45);
+}
+
+/* Its stand, down to the desk. */
+.pp[data-pp-theme='desk']::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  bottom: calc(var(--pp-deck) - 40px);
+  width: 170px;
+  height: 30px;
+  translate: -50% 0;
+  background:
+    linear-gradient(#2e2e2e, #1a1a1a) center top / 54px 22px no-repeat,
+    radial-gradient(50% 50% at 50% 50%, #1f1f1f 94%, rgb(0 0 0 / 0) 100%) center bottom / 170px 14px no-repeat;
+  pointer-events: none;
+}
+
+/* Beside the monitor on a wide player. */
+.pp[data-pp-theme='desk'][data-pp-wide] {
+  --pp-bezel-x: 124px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 96'%3E%3Cpath d='M30 60C29 42 18 34 8 22c12 1 22 12 24 32' fill='%234f8f5b'/%3E%3Cpath d='M30 60c0-20 9-34 22-42-2 15-11 28-20 41' fill='%2368a56f'/%3E%3Cpath d='M30 60c-3-22 1-41 4-54 7 15 5 36-1 54' fill='%235a9a63'/%3E%3Cpath d='M30 60c-6-12-14-17-24-18 6 8 13 14 22 19' fill='%233f7a4c'/%3E%3Cpath d='M15 64h30l-4 28H19z' fill='%23c8734f'/%3E%3Crect x='12' y='59' width='36' height='8' rx='2' fill='%23d98a63'/%3E%3C/svg%3E") no-repeat left 30px bottom calc(var(--pp-deck) - 31px) / 64px auto,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 80'%3E%3Crect x='12' y='6' width='5' height='44' rx='1' fill='%23ffd100' transform='rotate(-8 14 28)'/%3E%3Crect x='22' y='2' width='5' height='48' rx='1' fill='%235b7cc4' transform='rotate(6 24 26)'/%3E%3Crect x='17' y='10' width='5' height='40' rx='1' fill='%23e46b5a'/%3E%3Cpath d='M6 40h32l-3 38H9z' fill='%233a3836'/%3E%3Cpath d='M6 40h32v4H6z' fill='%234a4744'/%3E%3C/svg%3E") no-repeat right 76px bottom calc(var(--pp-deck) - 31px) / 34px auto,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 66'%3E%3Cpath d='M20 4c-4 5 4 8 0 13M30 2c-4 5 4 8 0 13' stroke='%23f4f1ea' stroke-opacity='.4' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M41 30h4a7.5 7.5 0 0 1 0 15h-4' stroke='%23f0c200' stroke-width='4.5' fill='none'/%3E%3Cpath d='M8 24h33v28a11 11 0 0 1-11 11H19A11 11 0 0 1 8 52z' fill='%23ffd100'/%3E%3Cpath d='M8 24h33v5H8z' fill='%23f0c200'/%3E%3C/svg%3E") no-repeat right 18px bottom calc(var(--pp-deck) - 31px) / 48px auto,
+    linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0) var(--pp-desk-top),
+      #b08560 var(--pp-desk-top),
+      #b08560 calc(var(--pp-desk-top) + 2px),
+      #8a6446 calc(var(--pp-desk-top) + 2px),
+      #6a4b35 100%
+    ),
+    repeating-linear-gradient(rgb(255 255 255 / 0.025) 0 2px, rgb(255 255 255 / 0) 2px 9px),
+    radial-gradient(70% 80% at 12% 0%, rgb(255 209 0 / 0.07), rgb(255 209 0 / 0) 70%),
+    #25221f;
+}
+
+.pp[data-pp-theme='desk'] .pp-bar {
+  padding-top: 44px;
+}
+
+.pp[data-pp-theme='desk'] .pp-bar::before,
+.pp[data-pp-theme='desk'] .pp-bar::after {
+  display: none;
+}
+
+/* The display is a sticky note, stuck on a little crooked. */
+.pp[data-pp-theme='desk'] .pp-label {
+  grid-column: 1 / -1;
+  justify-self: start;
+  max-width: min(100%, 30rem);
+  padding: 9px 14px 10px;
+  border-radius: 2px;
+  background: var(--pp-sticky);
+  box-shadow: inset 0 -12px 14px -12px rgb(0 0 0 / 0.14), 0 6px 12px rgb(0 0 0 / 0.32);
+  color: #202020;
+  font: 600 13px/1.25 var(--pp-font);
+  text-shadow: none;
+  rotate: -1deg;
+}
+
+/* Keycaps: light, with their sides showing, and they press in. */
+.pp[data-pp-theme='desk'] .pp-button {
+  color: #2a2724;
+}
+
+.pp[data-pp-theme='desk'] .pp-button[aria-disabled='true'] {
+  color: rgb(42 39 36 / 0.32);
+}
+
+.pp[data-pp-theme='desk'] .pp-play {
+  background: linear-gradient(#ffe36b, #ffd100);
+  box-shadow: inset 0 1px 0 #fff3b0, 0 3px 0 #c9a200, 0 5px 9px rgb(0 0 0 / 0.38);
+  color: #202020;
+}
+
+.pp[data-pp-theme='desk'] .pp-button[aria-expanded='true'] {
+  background: linear-gradient(#fff1a8, #ffe271);
+  color: #202020;
+}
+
+.pp[data-pp-theme='desk'] .pp-button[aria-expanded='true']::after {
+  display: none;
+}
+
+.pp[data-pp-theme='desk']:has(.pp-end):has(.pp-play[data-ended]) .pp-chapters-button[aria-expanded='true'] {
+  background: var(--pp-key);
+}
+
+/* The line is a ruler on the desk, its millimetres along the top edge, highlighted where you have watched. */
+.pp[data-pp-theme='desk'] .pp-seek::before {
+  content: '';
+  position: absolute;
+  inset: 4px -12px;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(90deg, rgb(32 32 32 / 0.7) 0 1px, rgb(0 0 0 / 0) 1px 40px) left 12px top / calc(100% - 24px) 11px no-repeat,
+    repeating-linear-gradient(90deg, rgb(32 32 32 / 0.45) 0 1px, rgb(0 0 0 / 0) 1px 8px) left 12px top / calc(100% - 24px) 6px no-repeat,
+    linear-gradient(#fbf7ec, #ece5d3);
+  box-shadow: 0 2px 0 #bdb29a, 0 5px 10px rgb(0 0 0 / 0.3);
+}
+
+.pp[data-pp-theme='desk'] .pp-seek-track {
+  height: 4px;
+}
+
+.pp[data-pp-theme='desk'] .pp-seek[data-interactive] .pp-seek-track {
+  height: 6px;
+}
+
+.pp[data-pp-theme='desk'] .pp-seek-track::before {
+  background: rgb(32 32 32 / 0.2);
+  box-shadow: none;
+}
+
+.pp[data-pp-theme='desk'] .pp-seek-buffer {
+  background: rgb(32 32 32 / 0.12);
+}
+
+.pp[data-pp-theme='desk'] .pp-seek-fill {
+  inset-block: -3px;
+  margin-inline: 0;
+  border-radius: 2px;
+  background: rgb(255 209 0 / 0.85);
+  box-shadow: none;
+}
+
+.pp[data-pp-theme='desk'] .pp-seek-dot {
+  background: #fbf7ec;
+  box-shadow: 0 0 0 1.5px #202020;
+}
+
+.pp[data-pp-theme='desk'] .pp-seek-chapter[data-active] .pp-seek-dot {
+  box-shadow: 0 0 0 1.5px #202020, 0 0 0 5px rgb(255 209 0 / 0.6);
+}
+
+.pp[data-pp-theme='desk'] .pp-lens {
+  background: #f6f1e3;
+}
+
+/* The chapters come up as polaroids, a little crooked, the one playing with a yellow strip. */
+.pp[data-pp-theme='desk'] .pp-disc-image {
+  margin-bottom: 26px;
+  border-radius: 1px;
+  box-shadow: 0 0 0 6px #fbfaf6, 0 18px 0 6px #fbfaf6, 0 24px 20px 6px rgb(0 0 0 / 0.4);
+}
+
+.pp[data-pp-theme='desk'] .pp-disc[aria-current] .pp-disc-image {
+  box-shadow: 0 0 0 6px #fbfaf6, 0 18px 0 6px var(--pp-sticky), 0 24px 20px 6px rgb(0 0 0 / 0.4);
+}
+
+.pp[data-pp-theme='desk'] .pp-disc-item:nth-child(odd) .pp-disc-image {
+  rotate: -2deg;
+}
+
+.pp[data-pp-theme='desk'] .pp-disc-item:nth-child(even) .pp-disc-image {
+  rotate: 1.5deg;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pp[data-pp-theme='desk'] .pp-disc:hover .pp-disc-image {
+    box-shadow: 0 0 0 6px #fff, 0 18px 0 6px #fff, 0 28px 24px 6px rgb(0 0 0 / 0.45);
+  }
+
+  .pp[data-pp-theme='desk'] .pp-disc[aria-current]:hover .pp-disc-image {
+    box-shadow: 0 0 0 6px #fff, 0 18px 0 6px var(--pp-sticky), 0 28px 24px 6px rgb(0 0 0 / 0.45);
+  }
+}
+
+.pp[data-pp-theme='desk'] .pp-disc:focus-visible .pp-disc-image {
+  outline-offset: 9px;
+}
+
+/* The seek preview's frame is a polaroid too. */
+.pp[data-pp-theme='desk'] .pp-preview-disc {
+  border-radius: 1px;
+  box-shadow: 0 0 0 7px #fbfaf6, 0 22px 0 7px #fbfaf6, 0 28px 24px 7px rgb(0 0 0 / 0.45);
+}
+
+.pp[data-pp-theme='desk'] .pp-preview {
+  gap: 30px;
+}
+
+/* A design note is a sticky note, its line down to the ruler in pencil. */
+.pp[data-pp-theme='desk'] .pp-note {
+  background: var(--pp-sticky);
+  border-radius: 2px;
+  box-shadow: inset 0 -12px 14px -12px rgb(0 0 0 / 0.14), 0 10px 22px rgb(0 0 0 / 0.4);
+}
+
+.pp[data-pp-theme='desk'] .pp-note::after {
+  background: #3a3632;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.4);
+}
+
+/* The QR code is on a polaroid. */
+.pp[data-pp-theme='desk'] .pp-end-qr {
+  padding: 8px 8px 22px;
+  height: auto;
+  border-radius: 1px;
+  background: #fbfaf6;
+  rotate: -2deg;
+}
+
+.pp[data-pp-theme='desk'] .pp-end-link {
+  background: linear-gradient(#ffe36b, #ffd100);
+  box-shadow: inset 0 1px 0 #fff3b0, 0 3px 0 #c9a200, 0 5px 9px rgb(0 0 0 / 0.38);
+}
+
 /* ---------------------------------------------------------------- sizes */
 
-/* Phone-sized players: the time moves up next to the chapter name, so the row keeps four thumb-sized buttons. */
+/* Phone-sized players: smaller slides, and the deck keeps play and four keys; reverse and advance step back for the
+   tray and the line, which reach every chapter too. */
 @container pp (width < 26rem) {
   .pp {
     --pp-disc: 52px;
@@ -1061,27 +1970,70 @@
   }
 
   .pp-bar {
-    padding: 0 6px 4px;
+    gap: 8px;
+    padding: 10px 10px 12px;
   }
 
-  .pp-time-row {
+  .pp-bar::before {
+    content: '';
+    margin-right: 6px;
+  }
+
+  .pp-bar::after {
+    top: 21px;
+    right: 12px;
+  }
+
+  .pp-row {
+    gap: 6px;
+  }
+
+  .pp-step {
     display: none;
   }
 
-  .pp-time-label {
-    display: flex;
+  .pp-label {
     font-size: 12px;
   }
 
   .pp-discs-list {
     justify-content: flex-start;
-    gap: 6px;
+    gap: 20px;
   }
 
   .pp-disc-title {
     font-size: 11.5px;
   }
+}
 
+/* Narrower players: the line gets a row of its own over the keys, and the end panel stacks. */
+@container pp (width < 34rem) {
+  .pp-end {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .pp-end-body {
+    justify-items: center;
+  }
+
+  .pp-row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .pp-seek {
+    order: -1;
+    flex: 1 1 100%;
+    height: 36px;
+    margin: 0 12px;
+  }
+
+  .pp-spacer {
+    display: block;
+  }
 }
 
 @container pp (width < 17rem) {
@@ -1091,7 +2043,11 @@
   }
 
   .pp-row {
-    gap: 0;
+    gap: 2px;
+  }
+
+  .pp-play {
+    width: 44px;
   }
 
   .pp-chapter-count {
@@ -1106,15 +2062,15 @@
   }
 
   .pp-bar {
-    padding: 0 16px 10px;
+    padding: 14px 18px 16px;
   }
 
   .pp-discs-list {
-    gap: 16px;
+    gap: 28px;
   }
 }
 
-/* A short player (a wide one on a phone) opens the discs only from the Chapters button, smaller, over the frame. */
+/* A short player (a wide one on a phone) brings the slides up only from the tray key, smaller, over the picture. */
 .pp[data-pp-short] {
   --pp-disc: 44px;
   --pp-big-play: 44px;
@@ -1128,10 +2084,24 @@
   display: none;
 }
 
+.pp[data-pp-short] .pp-end {
+  gap: 2px;
+  padding: 12px 16px;
+}
+
+/* A short player has room for the link alone. */
+.pp[data-pp-short] .pp-end-body :is(.pp-end-title, .pp-end-text) {
+  display: none;
+}
+
+.pp[data-pp-short] .pp-end-link {
+  margin-top: 0;
+}
+
 /* ---------------------------------------------------------------- fullscreen */
 
 .pp:where([data-fullscreen], :fullscreen) .pp-bar {
-  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 
 /* ---------------------------------------------------------------- touch */
@@ -1142,8 +2112,8 @@
   }
 
   .pp-seek-thumb {
-    width: 16px;
-    height: 16px;
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -1156,7 +2126,7 @@
     scroll-behavior: auto !important;
   }
 
-  .pp :is(.pp-discs, .pp-preview, .pp-big-play, .pp-volume, .pp-indicator, .pp-seek-thumb, .pp-seek-dot, .pp-disc-image, .pp-seek-track) {
+  .pp :is(.pp-discs, .pp-preview, .pp-big-play, .pp-volume, .pp-menu, .pp-menu-content, .pp-indicator, .pp-seek-thumb, .pp-seek-dot, .pp-disc-image, .pp-seek-track) {
     translate: none;
     scale: none;
     transition-property: opacity, visibility;
@@ -1172,6 +2142,22 @@
 
   .pp .pp-seek-dot {
     translate: -50% -50%;
+  }
+
+  .pp .pp-note {
+    transition-property: opacity;
+  }
+
+  .pp .pp-switch::after {
+    transition: none;
+  }
+
+  .pp .pp-seek-thumb[data-pp-lit] .pp-lens::after {
+    animation-name: pp-lamp-calm;
+  }
+
+  .pp .pp-seek-thumb[data-pp-lit]::after {
+    animation: none;
   }
 
   .pp .pp-seek-track {
@@ -1191,13 +2177,9 @@
 
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .pp {
-    --pp-glass: rgb(32 32 32);
-    --pp-muted: rgb(244 244 242 / 0.92);
-    --pp-faint: rgb(244 244 242 / 0.5);
-  }
-
-  .pp-scrim::before {
-    background: linear-gradient(to top, rgb(var(--pp-shade) / 0.97) 0, rgb(var(--pp-shade) / 0.95) 150px, rgb(var(--pp-shade) / 0) 210px);
+    --pp-glass: #22211f;
+    --pp-muted: rgb(244 241 234 / 0.92);
+    --pp-faint: rgb(244 241 234 / 0.5);
   }
 }
 
@@ -1209,12 +2191,34 @@
 
   .pp-seek-fill,
   .pp-volume-fill,
-  .pp-seek-dot::after,
-  .pp-progress::before {
+  .pp-seek-dot::after {
     background: Highlight;
   }
 
-  .pp-big-play {
+  .pp-big-play,
+  .pp-button,
+  .pp-end-link {
     border: 2px solid ButtonText;
+  }
+
+  .pp-label,
+  .pp-switch,
+  .pp-menu,
+  .pp-note {
+    border: 1px solid CanvasText;
+  }
+
+  .pp-menu-switch[aria-checked='true'] .pp-switch {
+    background: Highlight;
+  }
+
+  .pp-menu-item:is([data-highlighted], :focus-visible) {
+    outline: 2px solid Highlight;
+  }
+
+  .pp-seek-thumb,
+  .pp-volume-thumb {
+    border: 2px solid CanvasText;
+    background: Canvas;
   }
 }

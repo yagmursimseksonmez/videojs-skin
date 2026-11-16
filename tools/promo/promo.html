@@ -1,0 +1,229 @@
+<!doctype html>
+<!-- The Chengel promo, one frame at a time: tools/make-promo.mjs sets the demo frame and calls render(t). -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=block" />
+    <style>
+      @font-face {
+        font-family: 'Yagmur Hand';
+        src: url('./YagmurHand-Regular.woff2') format('woff2');
+        font-display: block;
+      }
+
+      :root {
+        --navy: #000131;
+        --sky: #94b7f8;
+        --lilac: #a98fd2;
+        --yellow: #f4bd3f;
+        --paper: #f8faff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1600px;
+        height: 900px;
+        overflow: hidden;
+      }
+
+      body {
+        position: relative;
+        background: linear-gradient(#b8cefb, var(--sky));
+        color: var(--navy);
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* The phone, in the middle. */
+      .phone {
+        position: absolute;
+        left: 50%;
+        top: 40px;
+        width: 392px;
+        height: 830px;
+        translate: -50% 0;
+        border: 10px solid var(--navy);
+        border-radius: 56px;
+        overflow: hidden;
+        background: #1a1923;
+        box-shadow: 0 30px 60px -24px rgb(0 1 49 / 0.55);
+      }
+
+      .phone img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* A line in Yağmur's hand on the left, chips on the right, for each part of the demo. */
+      .say {
+        position: absolute;
+        opacity: 0;
+      }
+
+      .hand {
+        left: 90px;
+        top: 50%;
+        width: 470px;
+        translate: 0 -50%;
+        font: 400 74px/1.05 'Yagmur Hand', cursive;
+        text-wrap: balance;
+      }
+
+      .chips {
+        right: 80px;
+        top: 50%;
+        width: 440px;
+        translate: 0 -50%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .chip {
+        padding: 12px 22px;
+        border: 2px solid var(--navy);
+        border-radius: 999px;
+        background: var(--paper);
+        font-size: 26px;
+        font-weight: 700;
+        white-space: nowrap;
+        box-shadow: 0 1px 0 0 rgb(0 1 49 / 0.16);
+      }
+
+      .chip.lilac {
+        background: var(--lilac);
+      }
+
+      .chip.yellow {
+        background: var(--yellow);
+      }
+
+      /* The end: the mascot, the name and where to get it. */
+      .end {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 8px;
+        opacity: 0;
+      }
+
+      .end img {
+        width: 300px;
+        height: 300px;
+        border-radius: 68px;
+        box-shadow: 0 30px 60px -24px rgb(0 1 49 / 0.45);
+      }
+
+      .end .name {
+        margin-top: 18px;
+        font: 400 110px/1 'Yagmur Hand', cursive;
+      }
+
+      .end .line {
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .end .store {
+        margin-top: 18px;
+        padding: 12px 26px;
+        border: 2px solid var(--navy);
+        border-radius: 999px;
+        background: var(--yellow);
+        font-size: 26px;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone"><img id="frame" alt="" /></div>
+
+    <div class="say hand" data-from="0.2" data-to="4.4">Chengel</div>
+    <div class="say chips" data-from="0.6" data-to="4.4">
+      <span class="chip">a crossword</span>
+      <span class="chip lilac">that teaches you</span>
+      <span class="chip yellow">words</span>
+    </div>
+
+    <div class="say hand" data-from="4.6" data-to="9.9">The clue is in your language</div>
+    <div class="say chips" data-from="5.0" data-to="9.9">
+      <span class="chip">English</span>
+      <span class="chip lilac">Türkçe</span>
+      <span class="chip">Deutsch</span>
+      <span class="chip yellow">Español</span>
+    </div>
+
+    <div class="say hand" data-from="10.1" data-to="13.1">A little every day</div>
+    <div class="say chips" data-from="10.4" data-to="13.1">
+      <span class="chip yellow">a streak</span>
+      <span class="chip lilac">a daily reminder</span>
+    </div>
+
+    <div class="say hand" data-from="13.3" data-to="18.5">Words you miss come back</div>
+    <div class="say chips" data-from="13.7" data-to="18.5">
+      <span class="chip lilac">until they stick</span>
+    </div>
+
+    <div class="say hand" data-from="18.7" data-to="23.1">Every word grows a flower</div>
+    <div class="say chips" data-from="19.1" data-to="23.1">
+      <span class="chip yellow">in your garden</span>
+    </div>
+
+    <div class="end" data-from="23.6">
+      <img src="./chengel-icon.webp" alt="" />
+      <div class="name">Chengel</div>
+      <div class="line">A1 to C1 · works offline · free, no subscription</div>
+      <div class="store">On the App Store</div>
+    </div>
+
+    <script>
+      const ease = (x) => 1 - (1 - Math.min(1, Math.max(0, x))) ** 3;
+      const IN = 0.4;
+      const OUT = 0.3;
+      const DEMO_END = 23.233;
+
+      // Each block fades and rises in from its start, and fades out before its end; chips follow each other.
+      window.render = (t) => {
+        for (const el of document.querySelectorAll('.say')) {
+          const from = +el.dataset.from;
+          const to = +el.dataset.to;
+          const shown = ease((t - from) / IN) * (1 - ease((t - (to - OUT)) / OUT));
+          el.style.opacity = String(shown);
+          if (el.classList.contains('chips')) {
+            [...el.children].forEach((chip, i) => {
+              const k = ease((t - from - i * 0.12) / IN);
+              chip.style.opacity = String(k);
+              chip.style.translate = `0 ${(1 - k) * 18}px`;
+            });
+          } else {
+            el.style.translate = `0 calc(-50% + ${(1 - ease((t - from) / IN)) * 18}px)`;
+          }
+        }
+        const phone = document.querySelector('.phone');
+        const leave = ease((t - DEMO_END) / 0.5);
+        phone.style.opacity = String(1 - leave);
+        phone.style.scale = String(1 - leave * 0.06);
+        const end = document.querySelector('.end');
+        const k = ease((t - +end.dataset.from) / 0.6);
+        end.style.opacity = String(k);
+        end.style.translate = `0 ${(1 - k) * 24}px`;
+      };
+
+      window.setFrame = (src) =>
+        new Promise((resolve) => {
+          const img = document.getElementById('frame');
+          if (!src) return resolve();
+          img.onload = () => img.decode().then(resolve, resolve);
+          img.src = src;
+        });
+    </script>
+  </body>
+</html>

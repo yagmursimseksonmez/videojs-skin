@@ -9,7 +9,7 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@600;700&family=Inter:wght@400;500;600&display=swap" />
   </head>
   <body>
     <header class="site-nav">
@@ -22,10 +22,14 @@
     <main>
       <section class="intro">
         <h1>Portfolio player</h1>
-        <p>A Video.js skin for the app demos in my portfolio. Every case has chapters, so you can jump straight to the part you want to see.</p>
+        <p>A Video.js skin for the app demos in my portfolio, set on my desk. Every case has chapters, as polaroids, so you can jump straight to the part you want to see, and a short note on why I designed each part that way. Turn the notes on in Settings.</p>
+        <div class="theme-switch" role="group" aria-label="Look">
+          <button type="button" data-theme="desk" aria-pressed="true">Desk</button>
+          <button type="button" data-theme="projector" aria-pressed="false">Projector</button>
+        </div>
       </section>
-      <section class="hero" aria-label="PlayMate demo">
-        <figure class="case" data-case="playmate"></figure>
+      <section class="hero" aria-label="Chengel promo">
+        <figure class="case" data-case="chengel-promo"></figure>
       </section>
       <section class="phones" aria-labelledby="phones-title">
         <h2 class="eyebrow" id="phones-title">Phone demos</h2>
@@ -35,6 +39,10 @@
           <figure class="case" data-case="healthbar"></figure>
         </div>
       </section>
+      <section class="hero" aria-labelledby="wide-title">
+        <h2 class="eyebrow" id="wide-title">Wide demo</h2>
+        <figure class="case" data-case="playmate"></figure>
+      </section>
       <section class="keys" aria-labelledby="keys-title">
         <h2 class="eyebrow" id="keys-title">Keyboard</h2>
         <dl class="key-list">
@@ -43,8 +51,11 @@
           <div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Volume</dd></div>
           <div><dt><kbd>M</kbd></dt><dd>Mute</dd></div>
           <div><dt><kbd>F</kbd></dt><dd>Fullscreen</dd></div>
+          <div><dt><kbd>&lt;</kbd> <kbd>&gt;</kbd></dt><dd>Slower or faster</dd></div>
+          <div><dt><kbd>C</kbd></dt><dd>Captions, when a video has them</dd></div>
+          <div><dt><kbd>N</kbd></dt><dd>Notes</dd></div>
           <div><dt><kbd>0</kbd>–<kbd>9</kbd></dt><dd>Jump to a tenth</dd></div>
-          <div><dt><kbd>Esc</kbd></dt><dd>Close the chapters</dd></div>
+          <div><dt><kbd>Esc</kbd></dt><dd>Close the menu or the chapters</dd></div>
         </dl>
       </section>
     </main>

@@ -1,9 +1,9 @@
 // Puts a portfolio player on a page: the skin around a video, its chapters and its storyboard.
 import '@videojs/html/video/player';
 import './video/skin';
-import { portfolioPlayerMarkup, type PortfolioPlayerOptions } from './markup';
+import { portfolioPlayerMarkup, type PortfolioPlayerEnd, type PortfolioPlayerOptions } from './markup';
 
-export type { PortfolioPlayerOptions };
+export type { PortfolioPlayerEnd, PortfolioPlayerOptions };
 
 let count = 0;
 
