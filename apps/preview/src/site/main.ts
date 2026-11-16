@@ -12,7 +12,7 @@ for (const figure of document.querySelectorAll<HTMLElement>('figure.case')) {
   const base = `./media/${item.id}`;
   const player = createPortfolioPlayer({
     ...(item.playbackId ? { playbackId: item.playbackId } : { src: `${base}/video.mp4`, thumbnails: `${base}/storyboard.vtt` }),
-    poster: item.playbackId ? undefined : `${base}/poster.jpg`,
+    poster: item.playbackId ? `https://image.mux.com/${item.playbackId}/thumbnail.webp?time=${item.posterTime ?? 0}` : `${base}/poster.jpg`,
     chapters: `${base}/chapters.vtt`,
     notes: `${base}/notes.vtt`,
     label: `${item.title} ${item.end ? 'promo' : 'demo'}`,

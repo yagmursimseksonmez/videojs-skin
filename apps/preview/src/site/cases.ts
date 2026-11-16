@@ -8,6 +8,8 @@ export interface Case {
   ratio: string;
   /** Set once the video is on Mux; until then the page plays the local copy. */
   playbackId?: string;
+  /** With Mux, the second to take the poster from, as the local poster does (media/cases.json). */
+  posterTime?: number;
   /** The card when the video ends. */
   end?: PortfolioPlayerEnd;
 }
@@ -20,6 +22,8 @@ export const cases: Case[] = [
     title: 'Chengel',
     meta: 'A crossword that teaches you words · free on the App Store',
     ratio: '1600 / 900',
+    playbackId: 'xjSpZCOuIvf014GT6vxsoWLw600GNR021jXAATK001Ij00ww',
+    posterTime: 1.6,
     end: {
       title: 'Get Chengel',
       text: 'A crossword that teaches you words. Free, works offline, no subscription.',

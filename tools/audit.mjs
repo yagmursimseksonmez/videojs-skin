@@ -25,16 +25,16 @@ async function open(options = {}) {
   page.on('pageerror', (e) => check('page', 'no script errors', false, e.message));
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForFunction(() => [...document.querySelectorAll('video')].every((v) => v.readyState >= 1));
+  await page.waitForFunction(() => [...document.querySelectorAll('video, mux-video')].every((v) => v.readyState >= 1));
   await sleep(500);
   return { context, page };
 }
 
 const hero = '[data-case=playmate] .pp';
-const video = (page, sel = hero) => page.locator(`${sel} video`);
+const video = (page, sel = hero) => page.locator(`${sel} :is(video, mux-video)`);
 const state = (page, sel = hero) =>
   page.evaluate((s) => {
-    const v = document.querySelector(`${s} video`);
+    const v = document.querySelector(`${s} :is(video, mux-video)`);
     return { paused: v.paused, time: v.currentTime, muted: v.muted, volume: v.volume };
   }, sel);
 
@@ -110,12 +110,12 @@ const state = (page, sel = hero) =>
   await sleep(300);
   await p.locator('.pp-menu-option[data-rate="1.5"]').click();
   await sleep(300);
-  const rate = await page.evaluate((sel) => document.querySelector(`${sel} video`).playbackRate, hero);
+  const rate = await page.evaluate((sel) => document.querySelector(`${sel} :is(video, mux-video)`).playbackRate, hero);
   check('controls', 'settings menu sets the speed', rate === 1.5, `${rate}×`);
   await page.screenshot({ path: `${out}settings.png`, clip: await p.boundingBox() });
   await page.keyboard.press('Escape');
   await sleep(300);
-  await page.evaluate((sel) => (document.querySelector(`${sel} video`).playbackRate = 1), hero);
+  await page.evaluate((sel) => (document.querySelector(`${sel} :is(video, mux-video)`).playbackRate = 1), hero);
 
   await page.mouse.move(box.x + box.width * 0.62, box.y + box.height / 2);
   await sleep(500);
@@ -241,7 +241,7 @@ const state = (page, sel = hero) =>
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
   await sleep(300);
-  const keyRate = await page.evaluate((sel) => document.querySelector(`${sel} video`).playbackRate, hero);
+  const keyRate = await page.evaluate((sel) => document.querySelector(`${sel} :is(video, mux-video)`).playbackRate, hero);
   check('keyboard', 'arrow keys and Enter pick a speed', keyRate === 1.25, `${keyRate}×`);
   await page.keyboard.press('Escape');
   await sleep(300);
@@ -249,7 +249,7 @@ const state = (page, sel = hero) =>
   check('keyboard', 'Escape closes the menu, focus back on the button', (await p.locator('.pp-menu[data-open]').count()) === 0 && focus.includes('pp-settings-button'), focus);
   await page.keyboard.press('<');
   await sleep(200);
-  check('keyboard', '< and > change the speed', (await page.evaluate((sel) => document.querySelector(`${sel} video`).playbackRate, hero)) < keyRate);
+  check('keyboard', '< and > change the speed', (await page.evaluate((sel) => document.querySelector(`${sel} :is(video, mux-video)`).playbackRate, hero)) < keyRate);
 
   await p.locator('.pp-mute').focus();
   await page.keyboard.press('Tab');
@@ -288,7 +288,7 @@ const state = (page, sel = hero) =>
   check('responsive', 'short player opens the discs only from the button', (await page.locator('[data-case=playmate] .pp[data-pp-short]').count()) === 1);
   // At its end the promo shows where to get the app; a phone can't scan itself, so there the card is the link alone.
   await page.locator('[data-case="chengel-promo"] .pp').scrollIntoViewIfNeeded();
-  await page.evaluate(() => { const v = document.querySelector('[data-case="chengel-promo"] video'); v.muted = true; v.currentTime = 27.3; void v.play(); });
+  await page.evaluate(() => { const v = document.querySelector('[data-case="chengel-promo"] :is(video, mux-video)'); v.muted = true; v.currentTime = 27.3; void v.play(); });
   await sleep(1500);
   const phoneEnd = await page.evaluate(() => {
     const card = document.querySelector('[data-case="chengel-promo"] .pp-end');
@@ -371,16 +371,16 @@ async function worstContrast(page, sel) {
   await page.locator(promo).scrollIntoViewIfNeeded();
   check('end card', 'hidden while the video plays', !(await page.locator(`${promo} .pp-end`).isVisible()));
   // The deck's reverse and advance keys move a chapter at a time, as a projector's do.
-  await page.evaluate((s) => { const v = document.querySelector(`${s} video`); v.muted = true; v.currentTime = 6; }, promo);
+  await page.evaluate((s) => { const v = document.querySelector(`${s} :is(video, mux-video)`); v.muted = true; v.currentTime = 6; }, promo);
   await sleep(300);
   await page.locator(`${promo} .pp-step[data-pp-step="1"]`).click();
   await sleep(300);
-  const advanced = await page.evaluate((s) => document.querySelector(`${s} video`).currentTime, promo);
+  const advanced = await page.evaluate((s) => document.querySelector(`${s} :is(video, mux-video)`).currentTime, promo);
   await page.locator(`${promo} .pp-step[data-pp-step="-1"]`).click();
   await sleep(300);
-  const reversed = await page.evaluate((s) => document.querySelector(`${s} video`).currentTime, promo);
+  const reversed = await page.evaluate((s) => document.querySelector(`${s} :is(video, mux-video)`).currentTime, promo);
   check('controls', 'advance and reverse keys move a chapter at a time', Math.abs(advanced - 10) < 0.3 && Math.abs(reversed - 4.5) < 0.3, `6 → ${advanced.toFixed(2)} → ${reversed.toFixed(2)}`);
-  await page.evaluate((s) => { const v = document.querySelector(`${s} video`); v.muted = true; v.currentTime = 27.3; void v.play(); }, promo);
+  await page.evaluate((s) => { const v = document.querySelector(`${s} :is(video, mux-video)`); v.muted = true; v.currentTime = 27.3; void v.play(); }, promo);
   await sleep(1500);
   const end = await page.evaluate((s) => {
     const root = document.querySelector(s);
@@ -420,7 +420,7 @@ async function worstContrast(page, sel) {
   for (const [id, t, kind, discs] of frames.flatMap((f) => [[...f, 'open'], [...f, 'closed']])) {
     const sel = `[data-case=${id}] .pp`;
     await page.locator(sel).scrollIntoViewIfNeeded();
-    await page.evaluate(([s, time]) => { const v = document.querySelector(`${s} video`); v.currentTime = time; }, [sel, t]);
+    await page.evaluate(([s, time]) => { const v = document.querySelector(`${s} :is(video, mux-video)`); v.currentTime = time; }, [sel, t]);
     await sleep(800);
     // Closed: the plain shade under the bar, as while playing with the controls up.
     if (discs === 'closed' && (await page.locator(`${sel} .pp-discs[data-open]`).count())) await page.locator(`${sel} .pp-chapters-button`).click();
@@ -434,14 +434,14 @@ async function worstContrast(page, sel) {
   for (const [id, t, kind] of frames.slice(0, 2)) {
     const sel = `[data-case=${id}] .pp`;
     await page.locator(sel).scrollIntoViewIfNeeded();
-    await page.evaluate(([s, time]) => { const v = document.querySelector(`${s} video`); v.muted = true; v.currentTime = time; void v.play(); }, [sel, t]);
+    await page.evaluate(([s, time]) => { const v = document.querySelector(`${s} :is(video, mux-video)`); v.muted = true; v.currentTime = time; void v.play(); }, [sel, t]);
     await page.mouse.move(10, 10);
     await sleep(3500);
     const resting = (await page.locator(`${sel} .pp-content:not([data-visible])`).count()) === 1;
     const worst = await worstContrast(page, sel);
     check('contrast', `note over a ${kind} frame (${id}) while the controls rest at least 4.5:1`, resting && worst.ratio >= 4.5, resting ? `lowest ${worst.ratio.toFixed(2)}:1 on "${worst.text}"` : 'controls did not rest');
     await page.locator(sel).screenshot({ path: `${out}contrast-${id}-resting.png` });
-    await page.evaluate((s) => document.querySelector(`${s} video`).pause(), sel);
+    await page.evaluate((s) => document.querySelector(`${s} :is(video, mux-video)`).pause(), sel);
   }
   await context.close();
 }
